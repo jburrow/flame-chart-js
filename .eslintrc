@@ -50,7 +50,7 @@
 
 		// TS rules
 		"@typescript-eslint/prefer-optional-chain": "error",
-		"@typescript-eslint/no-unused-vars": "error",
+		"@typescript-eslint/no-unused-vars": "hint",
 		"@typescript-eslint/no-unused-expressions": "error",
 		"@typescript-eslint/no-unnecessary-type-arguments": "error",
 		"@typescript-eslint/no-unnecessary-type-assertion": "error",
