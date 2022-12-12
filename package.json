@@ -8,6 +8,7 @@
   "scripts": {
     "build": "rollup -c",
     "build:tsc": "tsc",
+    "start": "rollup --config=rollup.local-dev.config.js -w -m",
     "watch": "rollup -c -w -m",
     "watch:tsc": "tsc -w",
     "test": "jest",

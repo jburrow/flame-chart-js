@@ -3,14 +3,18 @@ import { SeparatedInteractionsEngine } from '../engines/separated-interactions-e
 import { HitRegion } from '../types';
 import UIPlugin from './ui-plugin';
 
-export type CPUPluginStyles = {
+export interface TimeseriesPoint{
+    timestamp:number,
+    value:number,
+}
+export type TimeseriesPluginStyles = {
     defaultHeight: number;
 };
-export const defaultCPUPluginStyles: CPUPluginStyles = {
+export const defaultCPUPluginStyles: TimeseriesPluginStyles = {
     defaultHeight: 68,
 };
 
-export default class CPUPlugin extends UIPlugin<CPUPluginStyles> {
+export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     height?: 500;
     name = 'cpuPlugin';
 
@@ -74,7 +78,7 @@ export default class CPUPlugin extends UIPlugin<CPUPluginStyles> {
         // this.positionY = 0;
     }
 
-    setData(waterfall) {
+    setData(data:TimeseriesPoint[]) {
         // this.positionY = 0;
         // this.initialData = data;
         // this.data = data

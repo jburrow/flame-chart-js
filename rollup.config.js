@@ -7,8 +7,7 @@ import html from '@rollup/plugin-html';
 import cleaner from 'rollup-plugin-cleaner';
 import { template } from './example/src/template.js';
 import typescript from '@rollup/plugin-typescript';
-import serve from 'rollup-plugin-serve';
-import livereload from 'rollup-plugin-livereload';
+
 
 export default {
     input: './example/src/index.js',
@@ -35,8 +34,6 @@ export default {
         }),
         cleaner({
             targets: ['./example/dist'],
-        }),
-        serve({contentBase:'./example/dist', open:true}),
-        livereload({  delay: 2000, verbose:true }),
+        }),      
     ],
 };
