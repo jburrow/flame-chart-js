@@ -184,38 +184,41 @@ export default class CPUPlugin extends UIPlugin<CPUPluginStyles> {
         //     return true;
         // }
         // return false;
+
     }
 
     override render() {
-        const rightSide = this.renderEngine.positionX + this.renderEngine.getRealView();
-        const leftSide = this.renderEngine.positionX;
-        const blockHeight = this.renderEngine.blockHeight + 1;
+        const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
+        const timestampStart = this.renderEngine.positionX;
+        // console.log('[cpu-plugin][render] timestamp', timestampStart, timestampEnd);
 
-        const textStart = this.renderEngine.timeToPosition(1);
-        const textEnd = this.renderEngine.timeToPosition(10);
-        this.renderEngine.addRectToRenderQueue('hotpink', 0, 20, rightSide);
+        const positionStart = this.renderEngine.timeToPosition(timestampStart)
+        const positionEnd = this.renderEngine.timeToPosition(timestampEnd)
+        // console.log('[cpu-plugin][render] timestamp', positionStart, positionEnd);
 
-        this.renderEngine.setCtxColor('yellow');
+        this.renderEngine.setCtxColor('orange');
         this.renderEngine.ctx.beginPath();
+        
+        console.log('x', this.renderEngine.positionX, timestampEnd);
 
-        //this.renderEngine.ch
-        console.log('x', this.renderEngine.positionX, rightSide);
+        const margin =1;
+        let x = margin;        
+        const yStart = 30
+        let y = yStart;
 
-        let x = 0;
-        let y = 100;
         this.renderEngine.ctx.moveTo(x, y);
-
-        [1, 2, 3, 4, 5, 6, 7, 8].forEach((dot) => {
+ 
+        const points = 10;
+        const w = (positionEnd - positionStart - margin*2) / points;
+        for(let idx=0; idx<points;idx++){
             y -= 2;
             this.renderEngine.ctx.lineTo(x, y);
-            x += 50;
+            x += w;
             this.renderEngine.ctx.lineTo(x, y);
-        });
+        }
 
-        this.renderEngine.ctx.lineTo(x, 100);
-
+        this.renderEngine.ctx.lineTo(x, yStart);
         this.renderEngine.ctx.closePath();
-
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
     }

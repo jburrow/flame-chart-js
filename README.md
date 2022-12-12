@@ -268,4 +268,5 @@ window.addEventListener('resize', () => {
 1 - Checkout this repository
 2 - npm i
 3 - npm run watch
-4 - Open browser "[http://localhost:http://localhost:10001/](http://localhost:10001/)"
+4 - Open browser "[http://localhost:10001/](http://localhost:10001/)"
+

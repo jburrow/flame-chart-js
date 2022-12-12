@@ -36,7 +36,7 @@ export default {
         cleaner({
             targets: ['./example/dist'],
         }),
-        serve('./example/dist'),
-        livereload({ watch: './example/dist', delay: 5000 }),
+        serve({contentBase:'./example/dist', open:true}),
+        livereload({  delay: 2000, verbose:true }),
     ],
 };
