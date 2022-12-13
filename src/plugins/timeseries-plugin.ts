@@ -15,12 +15,16 @@ export const defaultCPUPluginStyles: TimeseriesPluginStyles = {
 };
 
 export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
-    height?: 500;
-    name = 'cpuPlugin';
+    height: number;
+    name:string;
+    color:string;
 
-    constructor() {
+    constructor(name:string,color:string) {
         super();
 
+        this.name=name;
+        this.color=color;
+        this.height = 50;
         console.log('hello');
     }
 
@@ -200,7 +204,7 @@ export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         const positionEnd = this.renderEngine.timeToPosition(timestampEnd)
         // console.log('[cpu-plugin][render] timestamp', positionStart, positionEnd);
 
-        this.renderEngine.setCtxColor('orange');
+        this.renderEngine.setCtxColor(this.color);
         this.renderEngine.ctx.beginPath();
         
         console.log('x', this.renderEngine.positionX, timestampEnd);
@@ -215,7 +219,8 @@ export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         const points = 10;
         const w = (positionEnd - positionStart - margin*2) / points;
         for(let idx=0; idx<points;idx++){
-            y -= 2;
+            y = Math.round(Math.random() * 100) * .3
+            
             this.renderEngine.ctx.lineTo(x, y);
             x += w;
             this.renderEngine.ctx.lineTo(x, y);

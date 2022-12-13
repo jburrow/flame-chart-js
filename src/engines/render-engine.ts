@@ -119,6 +119,8 @@ export class RenderEngine extends BasicRenderEngine {
             const plugin = this.plugins[index];
             const engine = this.children[index];
 
+            console.log('[getChildrenSizesType]', plugin.name, plugin.height, engine.flexible);
+
             if (engine.flexible && plugin.height) {
                 return 'flexibleStatic';
             } else if (!plugin.height) {
@@ -131,6 +133,7 @@ export class RenderEngine extends BasicRenderEngine {
             const plugin = this.plugins[index];
             const engine = this.children[index];
 
+            console.log('[getChildrenSizes]', plugin.name, type);
             if (engine.collapsed) {
                 return acc;
             } else if (type === 'flexibleGrowing') {

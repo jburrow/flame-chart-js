@@ -64,7 +64,15 @@ export default class FlameChart extends FlameChartContainer<FlameChartStyles> {
         let timeframeSelectorPlugin: TimeframeSelectorPlugin | undefined;
         let flameChartPlugin: FlameChartPlugin | undefined;
 
-        activePlugins.push(new TimeseriesPlugin());
+        activePlugins.push(new TogglePlugin("ts1", { styles: styles?.togglePlugin }));
+        activePlugins.push(new TimeseriesPlugin("ts1","yellow"));
+        
+        activePlugins.push(new TogglePlugin("ts2", { styles: styles?.togglePlugin }));
+        activePlugins.push(new TimeseriesPlugin("ts2","red"));
+        
+        activePlugins.push(new TogglePlugin("ts3", { styles: styles?.togglePlugin }));
+        activePlugins.push(new TimeseriesPlugin("ts3","blue"));
+        
 
         if (marks) {
             marksPlugin = new MarksPlugin(marks);
