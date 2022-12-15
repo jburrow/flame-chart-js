@@ -4,8 +4,10 @@ import { defaultRenderStyles } from '../../src/engines/basic-render-engine.js';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
 import { defaultTimeframeSelectorPluginStyles } from '../../src/plugins/timeframe-selector-plugin';
 import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin.js';
-import { defaultWaterfallPluginStyles } from '../../src/plugins/waterfall-plugin.js';
+import { defaultWaterfallPluginStyles, WaterfallPlugin } from '../../src/plugins/waterfall-plugin.js';
 import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin.js';
+import { FlameChartPlugin } from '../../src/plugins/flame-chart-plugin';
+
 import { generateRandomTree } from './test-data.js';
 import { query, initQuery } from './query.js';
 import {
@@ -149,17 +151,17 @@ const testIntervals = {
 
 const timeseriesData = [];
 let ii = 0
-const period =(inputs.end -inputs.start)
-const kk =  period / 100.0;
+const period = (inputs.end - inputs.start)
+const kk = period / 100.0;
 
 
-for(let idx=inputs.start; idx<inputs.end;idx+=kk){
-    const i = (Math.random()*100)
-    timeseriesData.push([idx,ii]);
-    timeseriesData.push([idx+5,ii]);
+for (let idx = inputs.start; idx < inputs.end; idx += kk) {
+    const i = (Math.random() * 100)
+    timeseriesData.push([idx, ii]);
+    timeseriesData.push([idx + 5, ii]);
     ii++;
 }
-console.log('[timeseriesData]',timeseriesData);
+console.log('[timeseriesData]', timeseriesData);
 
 const flameChart = new FlameChart({
     canvas,
@@ -170,11 +172,19 @@ const flameChart = new FlameChart({
         intervals: testIntervals
     },
     colors,
-    plugins:[
-        new TogglePlugin("time-series-1", { styles: {} })        ,
+    plugins: [
+        new TogglePlugin("time-series-1", { styles: {} }),
         new TimeseriesPlugin("time-series-1", "red", timeseriesData),
-         new TogglePlugin("time-series-2", { styles: {} })        ,
+        new TogglePlugin("time-series-2", { styles: {} }),
         new TimeseriesPlugin("time-series-2", "yellow", timeseriesData),
+        new WaterfallPlugin({
+            items: testItems,
+            intervals: testIntervals
+        }, { styles: {} }, "w2"),
+        new FlameChartPlugin(
+            {data:currentData,colors}, { styles: {} }, "f2"
+        )
+
     ]
 });
 
