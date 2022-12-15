@@ -18,7 +18,7 @@ export default {
         name: 'bundle',
     },
     plugins: [
-        typescript({ compilerOptions: { outDir: './example/dist' } }),
+        typescript({ compilerOptions: { outDir: './example/dist' } }),        
         resolve({
             browser: true,
             preferBuiltins: true,

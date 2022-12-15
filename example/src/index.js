@@ -148,10 +148,16 @@ const testIntervals = {
 
 
 const timeseriesData = [];
-for(let idx=inputs.start; idx<inputs.end;idx+=100){
-    const i = (Math.random()*100)/3
-    timeseriesData.push([idx,i]);
-    timeseriesData.push([idx+50,i]);
+let ii = 0
+const period =(inputs.end -inputs.start)
+const kk =  period / 100.0;
+
+
+for(let idx=inputs.start; idx<inputs.end;idx+=kk){
+    const i = (Math.random()*100)
+    timeseriesData.push([idx,ii]);
+    timeseriesData.push([idx+5,ii]);
+    ii++;
 }
 console.log('[timeseriesData]',timeseriesData);
 

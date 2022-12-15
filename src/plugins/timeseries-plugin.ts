@@ -28,7 +28,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.data = data;
         this.name=name;
         this.color=color;
-        this.height = 50;     
+        this.height = 100;     
     }
 
     override init(renderEngine: OffscreenRenderEngine, interactionsEngine: SeparatedInteractionsEngine) {
@@ -41,42 +41,23 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     }
 
     handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {
-        // const startPositionY = this.positionY;
-        // const startPositionX = this.renderEngine.parent.positionX;
-        // this.interactionsEngine.setCursor('grabbing');
-        // if (this.positionY + deltaY >= 0) {
-        //     this.setPositionY(this.positionY + deltaY);
-        // } else {
-        //     this.setPositionY(0);
-        // }
-        // this.renderEngine.tryToChangePosition(deltaX);
-        // if (startPositionX !== this.renderEngine.parent.positionX || startPositionY !== this.positionY) {
-        //     this.renderEngine.parent.render();
-        // }
+        
     }
 
     handleMouseUp() {
-        // this.interactionsEngine.clearCursor();
+        
     }
 
     handleHover(region: HitRegion<number> | null) {
-        // this.hoveredRegion = region;
+        
     }
 
     handleSelect(region: HitRegion<number> | null) {
-        // if (region) {
-        //     this.selectedRegion = region;
-        //     this.emit('select', this.initialData[region.data], 'waterfall-node');
-        //     this.renderEngine.render();
-        // } else if (this.selectedRegion && !region) {
-        //     this.selectedRegion = null;
-        //     this.emit('select', null, 'waterfall-node');
-        //     this.renderEngine.render();
-        // }
+
     }
 
     setPositionY(y: number) {
-        // this.positionY = y;
+        
     }
 
     override setSettings(settings) {
@@ -85,50 +66,8 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         // this.positionY = 0;
     }
 
-    setData(data:TimeseriesPoint[]) {
-        // this.positionY = 0;
-        // this.initialData = data;
-        // this.data = data
-        //     .map(({ name, intervals, timing, ...rest }, index) => {
-        //         const resolvedIntervals = typeof intervals === 'string' ? commonIntervals[intervals] : intervals;
-        //         const preparedIntervals = resolvedIntervals
-        //             .map(({ start, end, color, type, name }) => ({
-        //                 start: typeof start === 'string' ? timing[start] : start,
-        //                 end: typeof end === 'string' ? timing[end] : end,
-        //                 color,
-        //                 name,
-        //                 type,
-        //             }))
-        //             .filter(({ start, end }) => typeof start === 'number' && typeof end === 'number');
-        //         const blocks = preparedIntervals.filter(({ type }) => type === 'block');
-        //         const blockStart = getValueByChoice(blocks, 'start', Math.min);
-        //         const blockEnd = getValueByChoice(blocks, 'end', Math.max);
-        //         const min = getValueByChoice(preparedIntervals, 'start', Math.min);
-        //         const max = getValueByChoice(preparedIntervals, 'end', Math.max);
-        //         return {
-        //             ...rest,
-        //             intervals: preparedIntervals,
-        //             textBlock: {
-        //                 start: blockStart,
-        //                 end: blockEnd,
-        //             },
-        //             name,
-        //             timing,
-        //             min,
-        //             max,
-        //             index,
-        //         };
-        //     })
-        //     .filter(({ intervals }) => intervals.length)
-        //     .sort((a, b) => a.min - b.min || b.max - a.max);
-        // if (data.length) {
-        //     this.min = this.data.reduce((acc, { min }) => Math.min(acc, min), this.data[0].min);
-        //     this.max = this.data.reduce((acc, { max }) => Math.max(acc, max), this.data[0].max);
-        // }
-        // if (this.renderEngine) {
-        //     this.renderEngine.recalcMinMax();
-        //     this.renderEngine.resetParentView();
-        // }
+    setData(data:TimeseriesPoint[]) {        
+        
     }
 
     calcRect(start: number, duration: number, isEnd: boolean) {
@@ -142,160 +81,48 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     override renderTooltip() {
         return true;
-        // if (this.hoveredRegion) {
-        //     if (this.renderEngine.options.tooltip === false) {
-        //         return true;
-        //     } else if (typeof this.renderEngine.options.tooltip === 'function') {
-        //         const { data: index } = this.hoveredRegion;
-        //         const data = { ...this.hoveredRegion };
-        //         // @ts-ignore data type on waterfall item is number but here it is something else?
-        //         data.data = this.data.find(({ index: i }) => index === i);
-        //         this.renderEngine.options.tooltip(data, this.renderEngine, this.interactionsEngine.getGlobalMouse());
-        //     } else {
-        //         const { data: index } = this.hoveredRegion;
-        //         const dataItem = this.data.find(({ index: i }) => index === i);
-        //         if (dataItem) {
-        //             const { name, intervals, timing, meta = [] } = dataItem;
-        //             const timeUnits = this.renderEngine.getTimeUnits();
-        //             const nodeAccuracy = this.renderEngine.getAccuracy() + 2;
-        //             const header = { text: `${name}` };
-        //             const intervalsHeader = {
-        //                 text: 'intervals',
-        //                 color: this.renderEngine.styles.tooltipHeaderFontColor,
-        //             };
-        //             const intervalsTexts = intervals.map(({ name, start, end }) => ({
-        //                 text: `${name}: ${(end - start).toFixed(nodeAccuracy)} ${timeUnits}`,
-        //             }));
-        //             const timingHeader = { text: 'timing', color: this.renderEngine.styles.tooltipHeaderFontColor };
-        //             const timingTexts = Object.entries(timing)
-        //                 .filter(([, time]) => typeof time === 'number')
-        //                 .map(([name, time]: [string, number]) => ({
-        //                     text: `${name}: ${time.toFixed(nodeAccuracy)} ${timeUnits}`,
-        //                 }));
-        //             const metaHeader = { text: 'meta', color: this.renderEngine.styles.tooltipHeaderFontColor };
-        //             const metaTexts = meta
-        //                 ? meta.map(({ name, value, color }) => ({
-        //                       text: `${name}: ${value}`,
-        //                       color,
-        //                   }))
-        //                 : [];
-        //             this.renderEngine.renderTooltipFromData(
-        //                 [
-        //                     header,
-        //                     intervalsHeader,
-        //                     ...intervalsTexts,
-        //                     timingHeader,
-        //                     ...timingTexts,
-        //                     ...(metaTexts.length ? [metaHeader, ...metaTexts] : []),
-        //                 ],
-        //                 this.interactionsEngine.getGlobalMouse()
-        //             );
-        //         }
-        //     }
-        //     return true;
-        // }
-        // return false;
+     
 
     }
 
     override render() {
         const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
         const timestampStart = this.renderEngine.positionX;
+        
         console.log('[timeseries-plugin][render] timestamp', timestampStart, timestampEnd);
-
-        const positionStart = this.renderEngine.timeToPosition(timestampStart)
-        const positionEnd = this.renderEngine.timeToPosition(timestampEnd)
-        // console.log('[cpu-plugin][render] timestamp', positionStart, positionEnd);
 
         this.renderEngine.setCtxColor(this.color);
         this.renderEngine.ctx.beginPath();
         
-        const data = this.data.filter(([ts,v])=>ts>timestampStart && ts < timestampEnd);
-
-        console.log('x', timestampStart, timestampEnd, data.length);
-
-        const margin =1;
-        let x = margin;        
-        const yStart = 30
-        let y = yStart;
-
-        this.renderEngine.ctx.moveTo(x, y);
+        const d:[number,number][] = [];        
         
-        for(const [ts,v] of data){
-            this.renderEngine.ctx.lineTo(ts , v);                        
+        let beforeStart:[number,number]=[0,0] ;
+        let afterEnd:[number,number] =[0,0] ;
+        let iii =0;
+
+        this.data.forEach(([ts,v],idx)=>{
+            if(ts>timestampStart && ts < timestampEnd){
+                if(d.length===0){
+                    beforeStart= this.data[idx-1]
+                }
+                d.push([ts,v]);
+                iii=idx;
+            }
+        })
+
+        afterEnd = this.data[iii+1];
+        
+        this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), this.height-beforeStart[1]);
+        
+        for(var [ts,v] of d){
+            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(ts), this.height - v);                                    
         }
 
-        this.renderEngine.ctx.lineTo(x, yStart);
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height - v);
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);                        
         this.renderEngine.ctx.closePath();
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
     }
 }
-// const rightSide = this.renderEngine.positionX + this.renderEngine.getRealView();
-// const leftSide = this.renderEngine.positionX;
-// const blockHeight = this.renderEngine.blockHeight + 1;
-// const stack: WatterfallPluginDataItem[] = [];
-// const viewedData = this.data
-//     .filter(({ min, max }) => !((rightSide < min && rightSide < max) || (leftSide > max && rightSide > min)))
-//     .map((entry) => {
-//         while (stack.length && entry.min - stack[stack.length - 1].max > 0) {
-//             stack.pop();
-//         }
-
-//         const level = stack.length;
-
-//         const result = {
-//             ...entry,
-//             level,
-//         };
-
-//         stack.push(entry);
-
-//         return result;
-//     });
-
-// viewedData.forEach(({ name, intervals, textBlock, level, index }) => {
-//     const y = level * blockHeight - this.positionY;
-
-//     if (y + blockHeight >= 0 && y - blockHeight <= this.renderEngine.height) {
-//         const textStart = this.renderEngine.timeToPosition(textBlock.start);
-//         const textEnd = this.renderEngine.timeToPosition(textBlock.end);
-
-//         this.renderEngine.addTextToRenderQueue(name, textStart, y, textEnd - textStart);
-
-//         const { x, w } = intervals.reduce<{ x: number | null; w: number }>(
-//             (acc, { color, start, end, type }, index) => {
-//                 const { x, w } = this.calcRect(start, end - start, index === intervals.length - 1);
-
-//                 if (type === 'block') {
-//                     this.renderEngine.addRectToRenderQueue(color, x, y, w);
-//                 } else if (type === 'line') {
-//                     // ToDo add other types
-//                 }
-
-//                 return {
-//                     x: acc.x === null ? x : acc.x,
-//                     w: w + acc.w,
-//                 };
-//             },
-//             { x: null, w: 0 }
-//         );
-
-//         if (this.selectedRegion && this.selectedRegion.type === 'waterfall-node') {
-//             const selectedIndex = this.selectedRegion.data;
-
-//             if (selectedIndex === index) {
-//                 this.renderEngine.addStrokeToRenderQueue('green', x ?? 0, y, w, this.renderEngine.blockHeight);
-//             }
-//         }
-
-//         this.interactionsEngine.addHitRegion(
-//             RegionTypes.WATERFALL_NODE,
-//             index,
-//             x ?? 0,
-//             y,
-//             w,
-//             this.renderEngine.blockHeight
-//         );
-//     }
-// }, 0);
