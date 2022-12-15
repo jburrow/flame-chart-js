@@ -3,8 +3,9 @@ import { defaultTimeGridStyles } from '../../src/engines/time-grid.js';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine.js';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
 import { defaultTimeframeSelectorPluginStyles } from '../../src/plugins/timeframe-selector-plugin';
-import { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin.js';
+import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin.js';
 import { defaultWaterfallPluginStyles } from '../../src/plugins/waterfall-plugin.js';
+import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin.js';
 import { generateRandomTree } from './test-data.js';
 import { query, initQuery } from './query.js';
 import {
@@ -56,7 +57,11 @@ const colors = {
     event: '#a4775b'
 };
 
-const generateData = () => generateRandomTree(getInputValues(treeConfig));
+const inputs = getInputValues(treeConfig)
+const generateData = () => generateRandomTree(inputs);
+
+
+
 
 let currentData = query ? [] : generateData();
 
@@ -141,6 +146,15 @@ const testIntervals = {
     ]
 };
 
+
+const timeseriesData = [];
+for(let idx=inputs.start; idx<inputs.end;idx+=100){
+    const i = (Math.random()*100)/3
+    timeseriesData.push([idx,i]);
+    timeseriesData.push([idx+50,i]);
+}
+console.log('[timeseriesData]',timeseriesData);
+
 const flameChart = new FlameChart({
     canvas,
     data: currentData,
@@ -149,7 +163,13 @@ const flameChart = new FlameChart({
         items: testItems,
         intervals: testIntervals
     },
-    colors
+    colors,
+    plugins:[
+        new TogglePlugin("time-series-1", { styles: {} })        ,
+        new TimeseriesPlugin("time-series-1", "red", timeseriesData),
+         new TogglePlugin("time-series-2", { styles: {} })        ,
+        new TimeseriesPlugin("time-series-2", "yellow", timeseriesData),
+    ]
 });
 
 flameChart.on('select', (node, type) => {

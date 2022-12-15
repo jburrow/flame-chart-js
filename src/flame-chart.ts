@@ -7,7 +7,7 @@ import FlameChartPlugin from './plugins/flame-chart-plugin';
 import MarksPlugin from './plugins/marks-plugin';
 import { Colors, Data, Marks, Waterfall } from './types';
 import UIPlugin from './plugins/ui-plugin';
-import TimeseriesPlugin from './plugins/timeseries-plugin';
+import {TimeseriesPlugin} from './plugins/timeseries-plugin';
 
 export type FlameChartStyles = {
     timeGridPlugin?: Partial<TimeGridPluginStyles>;
@@ -35,7 +35,9 @@ export type FlameChartOptions = {
 
 const defaultSettings: FlameChartSettings = {};
 
-export default class FlameChart extends FlameChartContainer<FlameChartStyles> {
+
+
+export class FlameChart extends FlameChartContainer<FlameChartStyles> {
     setData: (data: Data) => void;
     setMarks: (data: Marks) => void;
     setWaterfall: (data: Waterfall) => void;
@@ -63,16 +65,6 @@ export default class FlameChart extends FlameChartContainer<FlameChartStyles> {
         let waterfallPlugin: WaterfallPlugin | undefined;
         let timeframeSelectorPlugin: TimeframeSelectorPlugin | undefined;
         let flameChartPlugin: FlameChartPlugin | undefined;
-
-        activePlugins.push(new TogglePlugin("ts1", { styles: styles?.togglePlugin }));
-        activePlugins.push(new TimeseriesPlugin("ts1","yellow"));
-        
-        activePlugins.push(new TogglePlugin("ts2", { styles: styles?.togglePlugin }));
-        activePlugins.push(new TimeseriesPlugin("ts2","red"));
-        
-        activePlugins.push(new TogglePlugin("ts3", { styles: styles?.togglePlugin }));
-        activePlugins.push(new TimeseriesPlugin("ts3","blue"));
-        
 
         if (marks) {
             marksPlugin = new MarksPlugin(marks);
@@ -152,3 +144,5 @@ export default class FlameChart extends FlameChartContainer<FlameChartStyles> {
         }
     }
 }
+
+export default FlameChart;

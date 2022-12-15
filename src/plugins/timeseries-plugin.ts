@@ -14,18 +14,21 @@ export const defaultCPUPluginStyles: TimeseriesPluginStyles = {
     defaultHeight: 68,
 };
 
-export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
+export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     height: number;
     name:string;
     color:string;
+    data:[number,number][];
+    maxValue:number;
 
-    constructor(name:string,color:string) {
+    constructor(name:string,color:string, data:[number,number][], maxValue=100) {
         super();
-
+        
+        this.maxValue = maxValue
+        this.data = data;
         this.name=name;
         this.color=color;
-        this.height = 50;
-        console.log('hello');
+        this.height = 50;     
     }
 
     override init(renderEngine: OffscreenRenderEngine, interactionsEngine: SeparatedInteractionsEngine) {
@@ -198,7 +201,7 @@ export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     override render() {
         const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
         const timestampStart = this.renderEngine.positionX;
-        // console.log('[cpu-plugin][render] timestamp', timestampStart, timestampEnd);
+        console.log('[timeseries-plugin][render] timestamp', timestampStart, timestampEnd);
 
         const positionStart = this.renderEngine.timeToPosition(timestampStart)
         const positionEnd = this.renderEngine.timeToPosition(timestampEnd)
@@ -207,7 +210,9 @@ export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.renderEngine.setCtxColor(this.color);
         this.renderEngine.ctx.beginPath();
         
-        console.log('x', this.renderEngine.positionX, timestampEnd);
+        const data = this.data.filter(([ts,v])=>ts>timestampStart && ts < timestampEnd);
+
+        console.log('x', timestampStart, timestampEnd, data.length);
 
         const margin =1;
         let x = margin;        
@@ -215,15 +220,9 @@ export default class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         let y = yStart;
 
         this.renderEngine.ctx.moveTo(x, y);
- 
-        const points = 10;
-        const w = (positionEnd - positionStart - margin*2) / points;
-        for(let idx=0; idx<points;idx++){
-            y = Math.round(Math.random() * 100) * .3
-            
-            this.renderEngine.ctx.lineTo(x, y);
-            x += w;
-            this.renderEngine.ctx.lineTo(x, y);
+        
+        for(const [ts,v] of data){
+            this.renderEngine.ctx.lineTo(ts , v);                        
         }
 
         this.renderEngine.ctx.lineTo(x, yStart);
