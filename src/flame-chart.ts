@@ -7,7 +7,7 @@ import FlameChartPlugin from './plugins/flame-chart-plugin';
 import MarksPlugin from './plugins/marks-plugin';
 import { Colors, Data, Marks, Waterfall } from './types';
 import UIPlugin from './plugins/ui-plugin';
-import {TimeseriesPlugin} from './plugins/timeseries-plugin';
+import { TimeseriesPlugin } from './plugins/timeseries-plugin';
 
 export type FlameChartStyles = {
     timeGridPlugin?: Partial<TimeGridPluginStyles>;
@@ -34,8 +34,6 @@ export type FlameChartOptions = {
 };
 
 const defaultSettings: FlameChartSettings = {};
-
-
 
 export class FlameChart extends FlameChartContainer<FlameChartStyles> {
     setData: (data: Data) => void;

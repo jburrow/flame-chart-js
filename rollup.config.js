@@ -10,7 +10,7 @@ import typescript from '@rollup/plugin-typescript';
 
 
 export default {
-    input: './example/src/index.js',
+    input: './example/src/index.ts',
     output: {
         dir: './example/dist',
         entryFileNames: 'main-[hash].js',

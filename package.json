@@ -12,7 +12,7 @@
     "watch": "rollup -c -w -m",
     "watch:tsc": "tsc -w",
     "test": "jest",
-    "lint:fix": "eslint --fix 'src/**/*.ts'",
+    "lint:fix": "eslint --fix src/**/*.ts && eslint --fix example/src/**/*.ts",
     "lint": "eslint 'src/**/*.ts' && echo 'no lint problems found!'"
   },
   "repository": {
