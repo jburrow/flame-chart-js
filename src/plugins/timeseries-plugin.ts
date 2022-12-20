@@ -105,8 +105,12 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(ts), this.height - v);
         }
 
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height - v);
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);
+        if (d.length > 0) {
+            const [ts, v] = d[d.length - 1];
+            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height - v);
+            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);
+        }
+        
         this.renderEngine.ctx.closePath();
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();

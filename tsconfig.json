@@ -5,9 +5,13 @@
       "es5",
       "es6",      
       "DOM",
-      "ESNext"
+      "ESNext",
+      "es2020",
     ],                                        
+    "inlineSourceMap": true,
   },
+  
+  // "types": ["color", "events"],
   "include": [
     "./src/**/*.ts",    
     "./example/src/**/*.ts",    
