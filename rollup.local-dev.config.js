@@ -6,6 +6,6 @@ import config from "./rollup.config";
 
 export default {
     ...config,
-    plugins:[...config.plugins,  serve({contentBase:'./example/dist', open:true}),
+    plugins:[...config.plugins,  serve({contentBase:['./example/dist','./'], open:true}),
     livereload({  delay: 2000, verbose:true }),]
 }

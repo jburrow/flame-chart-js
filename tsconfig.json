@@ -8,10 +8,10 @@
       "ESNext",
       "es2020",
     ],                                        
-    "inlineSourceMap": true,
+    "sourceMap": true
   },
   
-  // "types": ["color", "events"],
+  "types": ["color", "events"],
   "include": [
     "./src/**/*.ts",    
     "./example/src/**/*.ts",    
