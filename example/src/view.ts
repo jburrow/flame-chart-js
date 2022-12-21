@@ -1,3 +1,5 @@
+import { FlameChart } from '../../src/flame-chart';
+
 const wrapper = document.getElementById('wrapper');
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
@@ -47,7 +49,10 @@ const addInputs = (inputsContainer, inputsDict) => {
     inputsDict.forEach((item, index) => {
         const { div, input } = createInput(item);
 
-        input.addEventListener('change', (e: Event) => (inputsDict[index].value = parseInt(e.target.value)));
+        input.addEventListener(
+            'change',
+            (e: Event) => (inputsDict[index].value = parseInt((e.target as HTMLInputElement).value))
+        );
 
         fragment.appendChild(div);
     });
@@ -55,7 +60,7 @@ const addInputs = (inputsContainer, inputsDict) => {
     inputsContainer.appendChild(fragment);
 };
 
-const addStylesInputs = (inputsContainer, styles) => {
+const addStylesInputs = (inputsContainer, styles: Record<string, {}>) => {
     const fragment = document.createDocumentFragment();
 
     Object.entries(styles).forEach(([key, value]) => {
@@ -84,7 +89,8 @@ const addStylesInputs = (inputsContainer, styles) => {
             );
 
             input.addEventListener('change', (e) => {
-                customStyles[component][styleName] = isNumber ? parseInt(e.target.value) : e.target.value;
+                const value = (e.target as HTMLInputElement).value;
+                customStyles[component][styleName] = isNumber ? parseInt(value) : value;
             });
 
             fragment.appendChild(div);
@@ -108,7 +114,7 @@ const download = (content, fileName, contentType) => {
     a.click();
 };
 
-export const initView = (flameChart, config, styles) => {
+export const initView = (flameChart: FlameChart, config, styles: Record<string, {}>) => {
     addInputs(dataInputsContainer, config);
     addStylesInputs(stylesInputsContainer, styles);
 };
@@ -152,7 +158,7 @@ export const onExport = (cb) => {
 
 export const onImport = (cb) => {
     importInput.addEventListener('change', (e) => {
-        e.target.files[0].text().then(cb);
+        (e.target as HTMLInputElement).files[0].text().then(cb);
     });
 };
 
