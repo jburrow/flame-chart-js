@@ -50,7 +50,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     handleSelect(region: HitRegion<number> | null) { }
 
-    setPositionY(y: number) { consol }
+    setPositionY(y: number) { console.log('[setPositionY]', y) }
 
     override setSettings(settings) {
         // this.styles = mergeObjects(defaultWaterfallPluginStyles, styles);
@@ -89,8 +89,10 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
                 [{ text: header }, { text: dur }, { text: st }],
                 this.interactionsEngine.getGlobalMouse()
             );
+            return true;
 
         }
+        return false;
     }
 
     override render() {
