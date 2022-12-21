@@ -2,7 +2,9 @@ import { FlameChart, WaterfallIntervals } from '../../src/index';
 import { defaultTimeGridStyles } from '../../src/engines/time-grid';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
-import TimeframeSelectorPlugin, { defaultTimeframeSelectorPluginStyles } from '../../src/plugins/timeframe-selector-plugin';
+import TimeframeSelectorPlugin, {
+    defaultTimeframeSelectorPluginStyles,
+} from '../../src/plugins/timeframe-selector-plugin';
 import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin';
 import { defaultWaterfallPluginStyles, WaterfallPlugin } from '../../src/plugins/waterfall-plugin';
 import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
@@ -160,8 +162,8 @@ console.log('[timeseriesData]', timeseriesData);
 
 const timeseries1 = 'time-series-1';
 const timeseries2 = 'time-series-2';
-const flame1 = 'flame'
-const flame2 = 'flame-baseline'
+const flame1 = 'flame';
+const flame2 = 'flame-baseline';
 
 const flameChart = new FlameChart({
     canvas,
@@ -200,17 +202,17 @@ flameChart.on('select', (node, type) => {
     setNodeView(
         node
             ? `${type}\r\n${JSON.stringify(
-                {
-                    ...node,
-                    source: {
-                        ...node.source,
-                        children: '[]',
-                    },
-                    parent: undefined,
-                },
-                null,
-                '  '
-            )}`
+                  {
+                      ...node,
+                      source: {
+                          ...node.source,
+                          children: '[]',
+                      },
+                      parent: undefined,
+                  },
+                  null,
+                  '  '
+              )}`
             : ''
     );
 });

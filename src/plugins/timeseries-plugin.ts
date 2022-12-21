@@ -50,11 +50,11 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) { }
+    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {}
 
-    handleMouseUp() { }
+    handleMouseUp() {}
 
-    handleSelect(region: HitRegion<number> | null) { }
+    handleSelect(region: HitRegion<number> | null) {}
 
     setPositionY(y: number) {
         console.log('[setPositionY]', y);
