@@ -42,7 +42,7 @@ export class FlameChartPlugin extends UIPlugin {
     actualClusterizedFlatTree: ClusterizedFlatTree = [];
     initialClusterizedFlatTree: ClusterizedFlatTree = [];
     lastUsedColor: string | null = null;
-    renderChartTimeout = -1;
+    renderChartTimeout: unknown = null;
 
     constructor({ data, colors = {} }: { data: Data; colors: Colors | undefined }, name = 'flameChartPlugin') {
         super();
@@ -235,9 +235,8 @@ export class FlameChartPlugin extends UIPlugin {
 
                 const nodeAccuracy = this.renderEngine.getAccuracy() + 2;
                 const header = `${name}`;
-                const dur = `duration: ${duration.toFixed(nodeAccuracy)} ${timeUnits} ${
-                    children?.length ? `(self ${selfTime.toFixed(nodeAccuracy)} ${timeUnits})` : ''
-                }`;
+                const dur = `duration: ${duration.toFixed(nodeAccuracy)} ${timeUnits} ${children?.length ? `(self ${selfTime.toFixed(nodeAccuracy)} ${timeUnits})` : ''
+                    }`;
                 const st = `start: ${start.toFixed(nodeAccuracy)}`;
 
                 this.renderEngine.renderTooltipFromData(
@@ -301,7 +300,7 @@ export class FlameChartPlugin extends UIPlugin {
             this.renderEngine.addStrokeToRenderQueue('green', x, y, w, this.renderEngine.blockHeight);
         }
 
-        clearTimeout(this.renderChartTimeout);
+        clearTimeout(this.renderChartTimeout as number);
 
         this.renderChartTimeout = setTimeout(() => {
             this.interactionsEngine.clearHitRegions();
