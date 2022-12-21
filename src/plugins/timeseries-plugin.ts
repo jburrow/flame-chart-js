@@ -20,8 +20,8 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     color: string;
     data: [number, number][];
     maxValue: number;
-    hoveredRegion: HitRegion<number> | null = null;
-    selectedRegion: HitRegion<number> | null = null;
+    hoveredRegion: HitRegion<{}> | null = null;
+    selectedRegion: HitRegion<{}> | null = null;
 
     constructor(name: string, color: string, data: [number, number][], maxValue = 100) {
         super();
@@ -42,11 +42,11 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {}
+    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) { }
 
-    handleMouseUp() {}
+    handleMouseUp() { }
 
-    handleSelect(region: HitRegion<number> | null) {}
+    handleSelect(region: HitRegion<number> | null) { }
 
     setPositionY(y: number) {
         console.log('[setPositionY]', y);
@@ -58,7 +58,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         // this.positionY = 0;
     }
 
-    setData(data: TimeseriesPoint[]) {}
+    setData(data: TimeseriesPoint[]) { }
 
     calcRect(start: number, duration: number, isEnd: boolean) {
         const w = duration * this.renderEngine.zoom;
@@ -75,15 +75,14 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     override renderTooltip() {
         if (this.hoveredRegion) {
-            const { data: index } = this.hoveredRegion;
-            const data = { ...this.hoveredRegion };
+            const data = { ...this.hoveredRegion.data } as any;
 
             // @ts-ignore data type on waterfall item is number but here it is something else?
             // data.data = this.data.find(({ index: i }) => index === i);
 
             const header = 'header';
-            const dur = 'dur';
-            const st = 'st';
+            const dur = data.ts;
+            const st = data.v;
             this.renderEngine.renderTooltipFromData(
                 [{ text: header }, { text: dur }, { text: st }],
                 this.interactionsEngine.getGlobalMouse()
@@ -107,6 +106,8 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         let beforeStart: [number, number] = [0, 0];
         let afterEnd: [number, number] = [0, 0];
         let iii = 0;
+        let minValue = Number.MAX_VALUE;
+        let maxValue = Number.MIN_VALUE;
 
         this.data.forEach(([ts, v], idx) => {
             if (ts > timestampStart && ts < timestampEnd) {
@@ -115,24 +116,40 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
                 }
                 d.push([ts, v]);
                 iii = idx;
+
+                if (v < minValue) {
+                    minValue = v;
+                }
+
+                if (v > maxValue) {
+                    maxValue = v;
+                }
             }
         });
 
         afterEnd = this.data[iii + 1];
 
+
+
         this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
         this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), this.height - beforeStart[1]);
 
+        // let prevTs = 0;
         for (const [ts, v] of d) {
             this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(ts), this.height - v);
+
+            // const cc = this.renderEngine.timeToPosition(ts) - this.renderEngine.timeToPosition(prevTs);
+
             this.interactionsEngine.addHitRegion(
                 RegionTypes.CLUSTER,
-                {},
+                { ts, v },
                 this.renderEngine.timeToPosition(ts),
                 this.height - v,
-                20,
-                20
+                v,
+                50
             );
+
+            // prevTs = ts;
         }
 
         if (d.length > 0) {
@@ -144,5 +161,8 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.renderEngine.ctx.closePath();
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
+
+        this.renderEngine.ctx.strokeText(maxValue.toString() + 'x', 5, 0 + 10);
+        this.renderEngine.ctx.strokeText(minValue.toString(), 5, this.height - 5);
     }
 }

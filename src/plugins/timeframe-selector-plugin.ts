@@ -72,7 +72,7 @@ export default class TimeframeSelectorPlugin extends UIPlugin<TimeframeSelectorP
     private rightKnobMoving = false;
     private selectingActive = false;
     private startSelectingPosition = 0;
-    private timeout: number | undefined;
+    private timeout: unknown;
     private offscreenRenderEngine: OffscreenRenderEngine;
     private timeGrid: TimeGrid;
     private actualClusters: ClusterizedFlatTree = [];
@@ -122,7 +122,7 @@ export default class TimeframeSelectorPlugin extends UIPlugin<TimeframeSelectorP
             isDoubleClick = true;
         }
 
-        clearTimeout(this.timeout);
+        clearTimeout(this.timeout as number);
         this.timeout = setTimeout(() => (this.timeout = void 0), 300);
         this.leftKnobMoving = false;
         this.rightKnobMoving = false;

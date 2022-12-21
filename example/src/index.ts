@@ -1,4 +1,4 @@
-import FlameChart, { WaterfallInterval, WaterfallIntervals } from '../../src/index';
+import { FlameChart, WaterfallIntervals } from '../../src/index';
 import { defaultTimeGridStyles } from '../../src/engines/time-grid';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
@@ -188,23 +188,25 @@ flameChart.on('select', (node, type) => {
     setNodeView(
         node
             ? `${type}\r\n${JSON.stringify(
-                  {
-                      ...node,
-                      source: {
-                          ...node.source,
-                          children: '[]',
-                      },
-                      parent: undefined,
-                  },
-                  null,
-                  '  '
-              )}`
+                {
+                    ...node,
+                    source: {
+                        ...node.source,
+                        children: '[]',
+                    },
+                    parent: undefined,
+                },
+                null,
+                '  '
+            )}`
             : ''
     );
 });
 
 window.addEventListener('resize', () => {
-    flameChart.resize(...getWrapperWH());
+    const [width, height] = getWrapperWH();
+
+    flameChart.resize(width, height);
 });
 
 onApplyStyles((styles) => {
