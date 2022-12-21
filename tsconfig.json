@@ -1,26 +1,12 @@
 {
-  "compilerOptions": {
-    "target": "es2019",
-    "lib": [
-      "es5",
-      "es6",
-      "DOM",
-      "ESNext",
-      "es2020",
-    ],
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-  },
-  "types": [
-    "color",
-    "events"
-  ],
-  "include": [
-    "./src/**/*.ts",
-    "./example/src/**/*.ts",
-  ],
-  "exclude": [
-    "./src/**/*.spec.ts"
-  ]
+    "compilerOptions": {
+        "target": "es2019",
+        "lib": ["es5", "es6", "DOM", "ESNext", "es2020"],
+        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
+    },
+    "types": ["color", "events"],
+    "include": ["./src/**/*.ts", "./example/src/**/*.ts"],
+    "exclude": ["./src/**/*.spec.ts"]
 }

@@ -3,10 +3,15 @@ import { SeparatedInteractionsEngine } from '../engines/separated-interactions-e
 import { HitRegion, RegionTypes } from '../types';
 import UIPlugin from './ui-plugin';
 
-export interface TimeseriesPoint {
-    timestamp: number;
-    value: number;
+export type TimeseriesPoint = [number, number];
+
+interface TimeseriesPointsSummary {
+    min: number;
+    max: number;
+    first: number;
+    last: number;
 }
+
 export type TimeseriesPluginStyles = {
     defaultHeight: number;
 };
@@ -18,19 +23,22 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     height: number;
     name: string;
     color: string;
-    data: [number, number][];
+    data: TimeseriesPoint[];
     maxValue: number;
     hoveredRegion: HitRegion<{}> | null = null;
     selectedRegion: HitRegion<{}> | null = null;
+    summary: TimeseriesPointsSummary = null;
 
-    constructor(name: string, color: string, data: [number, number][], maxValue = 100) {
+    constructor(name: string, color: string, data: TimeseriesPoint[], maxValue = 100) {
         super();
 
         this.maxValue = maxValue;
-        this.data = data;
+        this.data = [];
         this.name = name;
         this.color = color;
         this.height = 100;
+
+        this.setData(data);
     }
 
     override init(renderEngine: OffscreenRenderEngine, interactionsEngine: SeparatedInteractionsEngine) {
@@ -42,11 +50,11 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) { }
+    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {}
 
-    handleMouseUp() { }
+    handleMouseUp() {}
 
-    handleSelect(region: HitRegion<number> | null) { }
+    handleSelect(region: HitRegion<number> | null) {}
 
     setPositionY(y: number) {
         console.log('[setPositionY]', y);
@@ -58,7 +66,37 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         // this.positionY = 0;
     }
 
-    setData(data: TimeseriesPoint[]) { }
+    setData(data: TimeseriesPoint[]) {
+        this.data = data;
+
+        let min = Number.MAX_VALUE;
+        let max = Number.MIN_VALUE;
+        let first = Number.MAX_VALUE;
+        let last = Number.MIN_VALUE;
+
+        this.data.forEach(([ts, v]) => {
+            if (v < min) {
+                min = v;
+            }
+            if (v > max) {
+                max = v;
+            }
+
+            if (ts < first) {
+                first = ts;
+            }
+            if (ts > last) {
+                last = ts;
+            }
+        });
+
+        this.summary = {
+            min,
+            max,
+            first,
+            last,
+        };
+    }
 
     calcRect(start: number, duration: number, isEnd: boolean) {
         const w = duration * this.renderEngine.zoom;
@@ -96,7 +134,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
         const timestampStart = this.renderEngine.positionX;
 
-        console.log('[timeseries-plugin][render] timestamp', timestampStart, timestampEnd);
+        console.time('[timeseries-plugin][render]');
 
         this.renderEngine.setCtxColor(this.color);
         this.renderEngine.ctx.beginPath();
@@ -129,8 +167,6 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
         afterEnd = this.data[iii + 1];
 
-
-
         this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
         this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), this.height - beforeStart[1]);
 
@@ -162,7 +198,9 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
 
-        this.renderEngine.ctx.strokeText(maxValue.toString() + 'x', 5, 0 + 10);
+        this.renderEngine.ctx.strokeText(maxValue.toString(), 5, 0 + 10);
         this.renderEngine.ctx.strokeText(minValue.toString(), 5, this.height - 5);
+
+        console.timeEnd('[timeseries-plugin][render]');
     }
 }

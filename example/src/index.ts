@@ -188,17 +188,17 @@ flameChart.on('select', (node, type) => {
     setNodeView(
         node
             ? `${type}\r\n${JSON.stringify(
-                {
-                    ...node,
-                    source: {
-                        ...node.source,
-                        children: '[]',
-                    },
-                    parent: undefined,
-                },
-                null,
-                '  '
-            )}`
+                  {
+                      ...node,
+                      source: {
+                          ...node.source,
+                          children: '[]',
+                      },
+                      parent: undefined,
+                  },
+                  null,
+                  '  '
+              )}`
             : ''
     );
 });
