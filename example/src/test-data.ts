@@ -105,8 +105,8 @@ export const generateRandomTree = ({
 
     const mappedNestingArrays = map(nestingArrays, (items, parent) => {
         const itemsCount = items.length;
-        const innerStart = parent && parent.start ? parent.start : start;
-        const innerEnd = parent && parent.end ? parent.end : end;
+        const innerStart = parent?.start ? parent.start : start;
+        const innerEnd = parent?.end ? parent.end : end;
 
         const timestamps =
             itemsCount > 1

@@ -1,6 +1,6 @@
 import { OffscreenRenderEngine } from '../engines/offscreen-render-engine';
 import { SeparatedInteractionsEngine } from '../engines/separated-interactions-engine';
-import { HitRegion, RegionTypes } from '../types';
+import { CursorTypes, HitRegion, RegionTypes } from '../types';
 import UIPlugin from './ui-plugin';
 
 export type TimeseriesPoint = [number, number];
@@ -50,11 +50,11 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {}
+    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) { }
 
-    handleMouseUp() {}
+    handleMouseUp() { }
 
-    handleSelect(region: HitRegion<number> | null) {}
+    handleSelect(region: HitRegion<number> | null) { }
 
     setPositionY(y: number) {
         console.log('[setPositionY]', y);
@@ -137,6 +137,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         console.time('[timeseries-plugin][render]');
 
         this.renderEngine.setCtxColor(this.color);
+        //FIgue this out        this.renderEngine.setCtxFont("Consolas")
         this.renderEngine.ctx.beginPath();
 
         const d: [number, number][] = [];
@@ -165,27 +166,32 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             }
         });
 
+        //TODO - consider a padding with here ...
+        const padding = 5;
+        const heightPerValueUnit = (this.height - padding) / (maxValue - minValue);
+        console.log('[heightPerValueUnit]', heightPerValueUnit);
+
+        const normalizeValue = (v: number) => {
+            return this.height - v * heightPerValueUnit;
+        };
+
         afterEnd = this.data[iii + 1];
 
         this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), this.height - beforeStart[1]);
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), normalizeValue(beforeStart[1]));
 
-        // let prevTs = 0;
         for (const [ts, v] of d) {
-            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(ts), this.height - v);
-
-            // const cc = this.renderEngine.timeToPosition(ts) - this.renderEngine.timeToPosition(prevTs);
+            const normalizedValue = normalizeValue(v);
+            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(ts), normalizedValue);
 
             this.interactionsEngine.addHitRegion(
                 RegionTypes.CLUSTER,
                 { ts, v },
                 this.renderEngine.timeToPosition(ts),
-                this.height - v,
-                v,
-                50
+                normalizedValue,
+                normalizedValue,
+                this.height
             );
-
-            // prevTs = ts;
         }
 
         if (d.length > 0) {
@@ -198,8 +204,12 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
 
-        this.renderEngine.ctx.strokeText(maxValue.toString(), 5, 0 + 10);
-        this.renderEngine.ctx.strokeText(minValue.toString(), 5, this.height - 5);
+        this.renderEngine.ctx.strokeText(`${Math.round(maxValue)} (${Math.round(this.summary.max)})`, 5, 0 + 10);
+        this.renderEngine.ctx.strokeText(
+            `${Math.round(minValue)} (${Math.round(this.summary.min)})`,
+            5,
+            this.height - 5
+        );
 
         console.timeEnd('[timeseries-plugin][render]');
     }

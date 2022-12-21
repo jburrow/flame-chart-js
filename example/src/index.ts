@@ -2,7 +2,7 @@ import { FlameChart, WaterfallIntervals } from '../../src/index';
 import { defaultTimeGridStyles } from '../../src/engines/time-grid';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
-import { defaultTimeframeSelectorPluginStyles } from '../../src/plugins/timeframe-selector-plugin';
+import TimeframeSelectorPlugin, { defaultTimeframeSelectorPluginStyles } from '../../src/plugins/timeframe-selector-plugin';
 import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin';
 import { defaultWaterfallPluginStyles, WaterfallPlugin } from '../../src/plugins/waterfall-plugin';
 import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
@@ -151,27 +151,38 @@ const period = inputs.end - inputs.start;
 const kk = period / 100.0;
 
 for (let idx = inputs.start; idx < inputs.end; idx += kk) {
-    const i = Math.random() * 100;
-    timeseriesData.push([idx, ii]);
-    timeseriesData.push([idx + 5, ii]);
+    const i = Math.random() * 1000;
+    timeseriesData.push([idx, i]);
+    timeseriesData.push([idx + kk / 2, i]);
     ii++;
 }
 console.log('[timeseriesData]', timeseriesData);
 
+const timeseries1 = 'time-series-1';
+const timeseries2 = 'time-series-2';
+const flame1 = 'flame'
+const flame2 = 'flame-baseline'
+
 const flameChart = new FlameChart({
     canvas,
-    data: currentData,
-    marks,
-    waterfall: {
-        items: testItems,
-        intervals: testIntervals,
-    },
+    data: null,
+    marks: null,
+    waterfall: null,
+    // data: currentData,
+    // marks,
+    // waterfall: {
+    //     items: testItems,
+    //     intervals: testIntervals,
+    // },
     colors,
     plugins: [
-        new TogglePlugin('time-series-1', { styles: {} }),
-        new TimeseriesPlugin('time-series-1', 'red', timeseriesData),
-        new TogglePlugin('time-series-2', { styles: {} }),
-        new TimeseriesPlugin('time-series-2', 'yellow', timeseriesData),
+        new TimeframeSelectorPlugin(currentData, { styles: {} }),
+        new TogglePlugin(flame1, { styles: {} }),
+        new FlameChartPlugin({ data: currentData, colors }, flame1),
+        new TogglePlugin(timeseries1, { styles: {} }),
+        new TimeseriesPlugin(timeseries1, 'red', timeseriesData),
+        new TogglePlugin(timeseries2, { styles: {} }),
+        new TimeseriesPlugin(timeseries2, 'yellow', timeseriesData),
         new WaterfallPlugin(
             {
                 items: testItems,
@@ -180,7 +191,8 @@ const flameChart = new FlameChart({
             { styles: {} },
             'w2'
         ),
-        new FlameChartPlugin({ data: currentData, colors }, 'f2'),
+        new TogglePlugin(flame2, { styles: {} }),
+        new FlameChartPlugin({ data: currentData, colors }, flame2),
     ],
 });
 
@@ -188,17 +200,17 @@ flameChart.on('select', (node, type) => {
     setNodeView(
         node
             ? `${type}\r\n${JSON.stringify(
-                  {
-                      ...node,
-                      source: {
-                          ...node.source,
-                          children: '[]',
-                      },
-                      parent: undefined,
-                  },
-                  null,
-                  '  '
-              )}`
+                {
+                    ...node,
+                    source: {
+                        ...node.source,
+                        children: '[]',
+                    },
+                    parent: undefined,
+                },
+                null,
+                '  '
+            )}`
             : ''
     );
 });
