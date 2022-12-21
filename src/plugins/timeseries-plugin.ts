@@ -42,15 +42,15 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) { }
+    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {}
 
-    handleMouseUp() { }
+    handleMouseUp() {}
 
+    handleSelect(region: HitRegion<number> | null) {}
 
-
-    handleSelect(region: HitRegion<number> | null) { }
-
-    setPositionY(y: number) { console.log('[setPositionY]', y) }
+    setPositionY(y: number) {
+        console.log('[setPositionY]', y);
+    }
 
     override setSettings(settings) {
         // this.styles = mergeObjects(defaultWaterfallPluginStyles, styles);
@@ -58,7 +58,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         // this.positionY = 0;
     }
 
-    setData(data: TimeseriesPoint[]) { }
+    setData(data: TimeseriesPoint[]) {}
 
     calcRect(start: number, duration: number, isEnd: boolean) {
         const w = duration * this.renderEngine.zoom;
@@ -75,22 +75,20 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     override renderTooltip() {
         if (this.hoveredRegion) {
-
             const { data: index } = this.hoveredRegion;
             const data = { ...this.hoveredRegion };
 
             // @ts-ignore data type on waterfall item is number but here it is something else?
             // data.data = this.data.find(({ index: i }) => index === i);
 
-            const header = "header";
-            const dur = "dur";
-            const st = "st";
+            const header = 'header';
+            const dur = 'dur';
+            const st = 'st';
             this.renderEngine.renderTooltipFromData(
                 [{ text: header }, { text: dur }, { text: st }],
                 this.interactionsEngine.getGlobalMouse()
             );
             return true;
-
         }
         return false;
     }

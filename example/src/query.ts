@@ -1,4 +1,4 @@
-export const query = location.search
+export const query = location.search;
 
 export const initQuery = (flameChart) => {
     if (query) {
@@ -14,7 +14,7 @@ export const initQuery = (flameChart) => {
         if (args.file) {
             fetch(decodeURIComponent(args.file), {
                 method: 'GET',
-                mode: 'no-cors'
+                mode: 'no-cors',
             })
                 .then((res) => res.text())
                 .then((data) => {
@@ -23,4 +23,4 @@ export const initQuery = (flameChart) => {
                 });
         }
     }
-}
+};

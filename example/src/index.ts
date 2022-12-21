@@ -1,4 +1,3 @@
-
 import FlameChart, { WaterfallInterval, WaterfallIntervals } from '../../src/index';
 import { defaultTimeGridStyles } from '../../src/engines/time-grid';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
@@ -20,7 +19,7 @@ import {
     onExport,
     onImport,
     getWrapperWH,
-    getCanvas
+    getCanvas,
 } from './view';
 
 const treeConfig = [
@@ -39,32 +38,29 @@ const marks = [
         shortName: 'DCL',
         fullName: 'DOMContentLoaded',
         timestamp: 2000,
-        color: '#d7c44c'
+        color: '#d7c44c',
     },
     {
         shortName: 'LE',
         fullName: 'LoadEvent',
         timestamp: 2100,
-        color: '#4fd24a'
+        color: '#4fd24a',
     },
     {
         shortName: 'TTI',
         fullName: 'Time To Interactive',
         timestamp: 3000,
-        color: '#4b7ad7'
-    }
+        color: '#4b7ad7',
+    },
 ];
 
 const colors = {
     task: '#696969',
-    event: '#a4775b'
+    event: '#a4775b',
 };
 
-const inputs = getInputValues(treeConfig)
+const inputs = getInputValues(treeConfig);
 const generateData = () => generateRandomTree(inputs);
-
-
-
 
 let currentData = query ? [] : generateData();
 
@@ -81,8 +77,8 @@ const testItems = [
         timing: {
             requestStart: 2050,
             responseStart: 2500,
-            responseEnd: 2600
-        }
+            responseEnd: 2600,
+        },
     },
     {
         name: 'bar',
@@ -90,8 +86,8 @@ const testItems = [
         timing: {
             requestStart: 2120,
             responseStart: 2180,
-            responseEnd: 2300
-        }
+            responseEnd: 2300,
+        },
     },
     {
         name: 'bar2',
@@ -99,8 +95,8 @@ const testItems = [
         timing: {
             requestStart: 2120,
             responseStart: 2180,
-            responseEnd: 2300
-        }
+            responseEnd: 2300,
+        },
     },
     {
         name: 'bar3',
@@ -108,8 +104,8 @@ const testItems = [
         timing: {
             requestStart: 2130,
             responseStart: 2180,
-            responseEnd: 2320
-        }
+            responseEnd: 2320,
+        },
     },
     {
         name: 'bar4',
@@ -117,8 +113,8 @@ const testItems = [
         timing: {
             requestStart: 2300,
             responseStart: 2350,
-            responseEnd: 2400
-        }
+            responseEnd: 2400,
+        },
     },
     {
         name: 'bar5',
@@ -126,9 +122,9 @@ const testItems = [
         timing: {
             requestStart: 2500,
             responseStart: 2520,
-            responseEnd: 2550
-        }
-    }
+            responseEnd: 2550,
+        },
+    },
 ];
 const testIntervals: WaterfallIntervals = {
     default: [
@@ -137,27 +133,25 @@ const testIntervals: WaterfallIntervals = {
             color: 'rgb(207,196,152)',
             type: 'block',
             start: 'requestStart',
-            end: 'responseStart'
+            end: 'responseStart',
         },
         {
             name: 'downloading',
             color: 'rgb(207,180,81)',
             type: 'block',
             start: 'responseStart',
-            end: 'responseEnd'
-        }
-    ]
+            end: 'responseEnd',
+        },
+    ],
 };
 
-
 const timeseriesData = [];
-let ii = 0
-const period = (inputs.end - inputs.start)
+let ii = 0;
+const period = inputs.end - inputs.start;
 const kk = period / 100.0;
 
-
 for (let idx = inputs.start; idx < inputs.end; idx += kk) {
-    const i = (Math.random() * 100)
+    const i = Math.random() * 100;
     timeseriesData.push([idx, ii]);
     timeseriesData.push([idx + 5, ii]);
     ii++;
@@ -170,34 +164,43 @@ const flameChart = new FlameChart({
     marks,
     waterfall: {
         items: testItems,
-        intervals: testIntervals
+        intervals: testIntervals,
     },
     colors,
     plugins: [
-        new TogglePlugin("time-series-1", { styles: {} }),
-        new TimeseriesPlugin("time-series-1", "red", timeseriesData),
-        new TogglePlugin("time-series-2", { styles: {} }),
-        new TimeseriesPlugin("time-series-2", "yellow", timeseriesData),
-        new WaterfallPlugin({
-            items: testItems,
-            intervals: testIntervals
-        }, { styles: {} }, "w2"),
-        new FlameChartPlugin(
-            { data: currentData, colors }, "f2"
-        )
-
-    ]
+        new TogglePlugin('time-series-1', { styles: {} }),
+        new TimeseriesPlugin('time-series-1', 'red', timeseriesData),
+        new TogglePlugin('time-series-2', { styles: {} }),
+        new TimeseriesPlugin('time-series-2', 'yellow', timeseriesData),
+        new WaterfallPlugin(
+            {
+                items: testItems,
+                intervals: testIntervals,
+            },
+            { styles: {} },
+            'w2'
+        ),
+        new FlameChartPlugin({ data: currentData, colors }, 'f2'),
+    ],
 });
 
 flameChart.on('select', (node, type) => {
-    setNodeView(node ? `${type}\r\n${JSON.stringify({
-        ...node,
-        source: {
-            ...node.source,
-            children: '[]',
-        },
-        parent: undefined
-    }, null, '  ')}` : '');
+    setNodeView(
+        node
+            ? `${type}\r\n${JSON.stringify(
+                  {
+                      ...node,
+                      source: {
+                          ...node.source,
+                          children: '[]',
+                      },
+                      parent: undefined,
+                  },
+                  null,
+                  '  '
+              )}`
+            : ''
+    );
 });
 
 window.addEventListener('resize', () => {
@@ -206,7 +209,7 @@ window.addEventListener('resize', () => {
 
 onApplyStyles((styles) => {
     flameChart.setSettings({
-        styles
+        styles,
     });
 });
 
@@ -233,5 +236,5 @@ initView(flameChart, treeConfig, {
     timeGridPlugin: defaultTimeGridPluginStyles,
     timeframeSelectorPlugin: defaultTimeframeSelectorPluginStyles,
     waterfallPlugin: defaultWaterfallPluginStyles,
-    togglePlugin: defaultTogglePluginStyles
+    togglePlugin: defaultTogglePluginStyles,
 });

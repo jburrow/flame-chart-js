@@ -4,19 +4,21 @@ const randomString = (length, minLength = 4) => {
     const rndLength = rnd(length, minLength);
     let str = '';
 
-    for (let i = rndLength; i--;) {
+    for (let i = rndLength; i--; ) {
         str += chars[rnd(chars.length - 1)];
     }
 
     return str;
-}
+};
 
 const rnd = (max, min = 0) => Math.round(Math.random() * (max - min)) + min;
 const rndFloat = (max, min = 0) => Math.random() * (max - min) + min;
 
 const generateRandomLevel = (count, minChild = 1, maxChild = 10, parent) => {
     const childrenCount = count ? rnd(Math.min(count, maxChild), Math.min(count, minChild)) : 0;
-    const items = Array(childrenCount).fill(null).map(() => ({ children: [], parent }));
+    const items = Array(childrenCount)
+        .fill(null)
+        .map(() => ({ children: [], parent }));
     const rest = count - childrenCount;
 
     if (parent) {
@@ -25,12 +27,12 @@ const generateRandomLevel = (count, minChild = 1, maxChild = 10, parent) => {
 
     return {
         rest,
-        items
+        items,
     };
-}
+};
 
 const generateRandomNesting = (count, minChild, maxChild, parent) => {
-    const levels = []
+    const levels = [];
     let currentLevel = 0;
     let rest = count;
     let isStopped = false;
@@ -51,7 +53,6 @@ const generateRandomNesting = (count, minChild, maxChild, parent) => {
 
                     rest = layer.rest;
                     innerLevel.push(layer.items);
-
                 }
             }
 
@@ -65,13 +66,16 @@ const generateRandomNesting = (count, minChild, maxChild, parent) => {
         currentLevel++;
     }
 
-    console.log('Total count:', levels.reduce((acc, level) => level.reduce((acc, subLevel) => acc + subLevel.length, acc), 0));
+    console.log(
+        'Total count:',
+        levels.reduce((acc, level) => level.reduce((acc, subLevel) => acc + subLevel.length, acc), 0)
+    );
 
     return {
         root: levels[0][0],
-        rest
+        rest,
     };
-}
+};
 
 const map = (treeList, cb, parent = null) => {
     return cb(treeList, parent).map((item) => {
@@ -82,17 +86,19 @@ const map = (treeList, cb, parent = null) => {
 };
 
 export const generateRandomTree = ({
-                                       count,
-                                       start,
-                                       end,
-                                       minChild,
-                                       maxChild,
-                                       thinning,
-                                       colorsMonotony,
-                                       colorsCount
-                                   }) => {
+    count,
+    start,
+    end,
+    minChild,
+    maxChild,
+    thinning,
+    colorsMonotony,
+    colorsCount,
+}) => {
     const { root: nestingArrays } = generateRandomNesting(count, minChild, maxChild, null);
-    const types = Array(colorsCount).fill(null).map(() => randomString(10));
+    const types = Array(colorsCount)
+        .fill(null)
+        .map(() => randomString(10));
     let counter = 0;
     let typesCounter = 0;
     let currentType = types[typesCounter];
@@ -102,11 +108,14 @@ export const generateRandomTree = ({
         const innerStart = parent && parent.start ? parent.start : start;
         const innerEnd = parent && parent.end ? parent.end : end;
 
-        const timestamps = itemsCount > 1 ? Array(itemsCount - 1)
-            .fill(null)
-            .map(() => rndFloat(innerStart, innerEnd))
-            .concat(innerStart, innerEnd)
-            .sort((a, b) => a - b) : [innerStart, innerEnd];
+        const timestamps =
+            itemsCount > 1
+                ? Array(itemsCount - 1)
+                      .fill(null)
+                      .map(() => rndFloat(innerStart, innerEnd))
+                      .concat(innerStart, innerEnd)
+                      .sort((a, b) => a - b)
+                : [innerStart, innerEnd];
 
         items.forEach((item, index) => {
             const currentWindow = timestamps[index + 1] - timestamps[index];
@@ -136,5 +145,5 @@ export const generateRandomTree = ({
 
     console.log('Data:', mappedNestingArrays);
 
-    return mappedNestingArrays
-}
+    return mappedNestingArrays;
+};

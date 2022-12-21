@@ -235,8 +235,9 @@ export class FlameChartPlugin extends UIPlugin {
 
                 const nodeAccuracy = this.renderEngine.getAccuracy() + 2;
                 const header = `${name}`;
-                const dur = `duration: ${duration.toFixed(nodeAccuracy)} ${timeUnits} ${children?.length ? `(self ${selfTime.toFixed(nodeAccuracy)} ${timeUnits})` : ''
-                    }`;
+                const dur = `duration: ${duration.toFixed(nodeAccuracy)} ${timeUnits} ${
+                    children?.length ? `(self ${selfTime.toFixed(nodeAccuracy)} ${timeUnits})` : ''
+                }`;
                 const st = `start: ${start.toFixed(nodeAccuracy)}`;
 
                 this.renderEngine.renderTooltipFromData(
