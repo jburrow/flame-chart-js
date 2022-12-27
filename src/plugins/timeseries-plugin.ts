@@ -134,7 +134,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
         const timestampStart = this.renderEngine.positionX;
 
-        console.time('[timeseries-plugin][render]');
+        // console.time('[timeseries-plugin][render]');
 
         this.renderEngine.setCtxColor(this.color);
         //FIgue this out        this.renderEngine.setCtxFont("Consolas")
@@ -169,7 +169,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         //TODO - consider a padding with here ...
         const padding = 5;
         const heightPerValueUnit = (this.height - padding) / (maxValue - minValue);
-        console.log('[heightPerValueUnit]', heightPerValueUnit);
+        // console.log('[heightPerValueUnit]', heightPerValueUnit);
 
         const normalizeValue = (v: number) => {
             return this.height - v * heightPerValueUnit;
@@ -211,6 +211,6 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             this.height - 5
         );
 
-        console.timeEnd('[timeseries-plugin][render]');
+        // console.timeEnd('[timeseries-plugin][render]');
     }
 }

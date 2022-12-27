@@ -1,3 +1,5 @@
+import { Node } from '../../src/index';
+
 const chars = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
 
 const randomString = (length, minLength = 4) => {
@@ -14,7 +16,14 @@ const randomString = (length, minLength = 4) => {
 const rnd = (max, min = 0) => Math.round(Math.random() * (max - min)) + min;
 const rndFloat = (max, min = 0) => Math.random() * (max - min) + min;
 
-const generateRandomLevel = (count, minChild = 1, maxChild = 10, parent) => {
+type Level = {
+    children: Level[];
+    parent: Level;
+};
+
+type Layer = { rest: number; items: Level[] };
+
+const generateRandomLevel = (count: number, minChild = 1, maxChild = 10, parent: Level): Layer => {
     const childrenCount = count ? rnd(Math.min(count, maxChild), Math.min(count, minChild)) : 0;
     const items = Array(childrenCount)
         .fill(null)
@@ -31,7 +40,7 @@ const generateRandomLevel = (count, minChild = 1, maxChild = 10, parent) => {
     };
 };
 
-const generateRandomNesting = (count, minChild, maxChild, parent) => {
+const generateRandomNesting = (count: number, minChild: number, maxChild: number, parent: Level) => {
     const levels = [];
     let currentLevel = 0;
     let rest = count;
@@ -44,12 +53,12 @@ const generateRandomNesting = (count, minChild, maxChild, parent) => {
             levels.push([layer.items]);
             rest = layer.rest;
         } else {
-            const level = levels[levels.length - 1];
+            const level: Level[][] = levels[levels.length - 1];
             const innerLevel = [];
 
-            for (let i = 0; i < level.length; i++) {
-                for (let j = 0; j < level[i].length; j++) {
-                    const layer = generateRandomLevel(rest, minChild, maxChild, level[i][j]);
+            for (const ll of level) {
+                for (const l of ll) {
+                    const layer = generateRandomLevel(rest, minChild, maxChild, l);
 
                     rest = layer.rest;
                     innerLevel.push(layer.items);
@@ -85,6 +94,17 @@ const map = (treeList, cb, parent = null) => {
     });
 };
 
+type TreeConfig = {
+    count: number;
+    start: number;
+    end: number;
+    minChild: number;
+    thinning: number;
+    maxChild: number;
+    colorsMonotony: number;
+    colorsCount: number;
+};
+
 export const generateRandomTree = ({
     count,
     start,
@@ -94,7 +114,7 @@ export const generateRandomTree = ({
     thinning,
     colorsMonotony,
     colorsCount,
-}) => {
+}: TreeConfig): Node[] => {
     const { root: nestingArrays } = generateRandomNesting(count, minChild, maxChild, null);
     const types = Array(colorsCount)
         .fill(null)
@@ -103,10 +123,10 @@ export const generateRandomTree = ({
     let typesCounter = 0;
     let currentType = types[typesCounter];
 
-    const mappedNestingArrays = map(nestingArrays, (items, parent) => {
+    const mappedNestingArrays = map(nestingArrays, (items: Node[], parent: Node) => {
         const itemsCount = items.length;
         const innerStart = parent?.start ? parent.start : start;
-        const innerEnd = parent?.end ? parent.end : end;
+        const innerEnd = parent?.duration ? innerStart + parent?.duration : end;
 
         const timestamps =
             itemsCount > 1
@@ -131,11 +151,11 @@ export const generateRandomTree = ({
             }
 
             item.start = timestamps[index] + rndFloat(currentWindow, 0) * (rndFloat(thinning) / 100);
-            item.end = timestamps[index + 1] - rndFloat(currentWindow, 0) * (rndFloat(thinning) / 100);
-            item.duration = item.end - item.start;
+            const end = timestamps[index + 1] - rndFloat(currentWindow, 0) * (rndFloat(thinning) / 100);
+            item.duration = end - item.start;
             item.name = randomString(14);
             item.type = currentType;
-            item.parent = null;
+            //item.parent = null;
 
             counter++;
         });

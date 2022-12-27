@@ -1,4 +1,4 @@
-import { FlameChart, WaterfallIntervals } from '../../src/index';
+import { Data, FlameChart, WaterfallIntervals } from '../../src/index';
 import { defaultTimeGridStyles } from '../../src/engines/time-grid';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
@@ -9,7 +9,7 @@ import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggl
 import { defaultWaterfallPluginStyles, WaterfallPlugin } from '../../src/plugins/waterfall-plugin';
 import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
 import { FlameChartPlugin } from '../../src/plugins/flame-chart-plugin';
-
+import { MarksPlugin } from '../../src/plugins/marks-plugin';
 import { generateRandomTree } from './test-data';
 import { query, initQuery } from './query';
 import {
@@ -24,7 +24,13 @@ import {
     getCanvas,
 } from './view';
 
-const treeConfig = [
+export interface TreeConfigItem {
+    name: string;
+    value: number;
+    units?: string;
+}
+
+const treeConfig: TreeConfigItem[] = [
     { name: 'count', value: 100000 },
     { name: 'start', value: 500 },
     { name: 'end', value: 5000 },
@@ -64,7 +70,7 @@ const colors = {
 const inputs = getInputValues(treeConfig);
 const generateData = () => generateRandomTree(inputs);
 
-let currentData = query ? [] : generateData();
+let currentData: Data = query ? [] : generateData();
 
 const [width, height] = getWrapperWH();
 const canvas = getCanvas();
@@ -167,15 +173,6 @@ const flame2 = 'flame-baseline';
 
 const flameChart = new FlameChart({
     canvas,
-    data: null,
-    marks: null,
-    waterfall: null,
-    // data: currentData,
-    // marks,
-    // waterfall: {
-    //     items: testItems,
-    //     intervals: testIntervals,
-    // },
     colors,
     plugins: [
         new TimeframeSelectorPlugin(currentData, { styles: {} }),
@@ -185,6 +182,8 @@ const flameChart = new FlameChart({
         new TimeseriesPlugin(timeseries1, 'red', timeseriesData),
         new TogglePlugin(timeseries2, { styles: {} }),
         new TimeseriesPlugin(timeseries2, 'yellow', timeseriesData),
+        new TogglePlugin(MarksPlugin.name, { styles: {} }),
+        new MarksPlugin(marks),
         new WaterfallPlugin(
             {
                 items: testItems,

@@ -119,11 +119,12 @@ export const initView = (flameChart: FlameChart, config, styles: Record<string, 
     addStylesInputs(stylesInputsContainer, styles);
 };
 
-export const getInputValues = (config) =>
-    config.reduce((acc, { name, value }) => {
+export const getInputValues = (config) => {
+    return config.reduce((acc, { name, value }) => {
         acc[name] = value;
         return acc;
     }, {});
+};
 
 export const setNodeView = (text) => {
     nodeView.innerHTML = text;

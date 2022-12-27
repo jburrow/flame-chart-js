@@ -10,9 +10,13 @@
     "build:tsc": "tsc",
     "watch": "rollup -c -w -m",
     "watch:tsc": "tsc -w",
+    "start": "rollup --config=rollup.local-dev.config.js -w -m",
     "test": "jest",
-    "lint:fix": "eslint --fix 'src/**/*.ts'",
-    "lint": "eslint 'src/**/*.ts' && echo 'no lint problems found!'"
+    "lint:fix": "eslint --fix src/**/*.ts && eslint --fix example/src/**/*.ts",
+    "lint": "eslint 'src/**/*.ts' && echo 'no lint problems found!'",
+    "pretty": "prettier --write src/**/*.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run test"
   },
   "repository": {
     "type": "git",
