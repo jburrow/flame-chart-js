@@ -1,4 +1,4 @@
-import FlameChart from '../../src/flame-chart';
+import { FlameChart } from '../../src/flame-chart';
 
 export const query = location.search;
 
