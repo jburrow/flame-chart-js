@@ -176,24 +176,24 @@ const flameChart = new FlameChart({
     colors,
     plugins: [
         new TimeframeSelectorPlugin(currentData, { styles: {} }),
-        new TogglePlugin(flame1, { styles: {} }),
-        new FlameChartPlugin({ data: currentData, colors }, flame1),
         new TogglePlugin(timeseries1, { styles: {} }),
         new TimeseriesPlugin(timeseries1, 'red', timeseriesData),
-        new TogglePlugin(timeseries2, { styles: {} }),
-        new TimeseriesPlugin(timeseries2, 'yellow', timeseriesData),
-        new TogglePlugin(MarksPlugin.name, { styles: {} }),
-        new MarksPlugin(marks),
+        new TogglePlugin("waterfall plugin", { styles: {} }),
         new WaterfallPlugin(
             {
                 items: testItems,
                 intervals: testIntervals,
             },
             { styles: {} },
-            'w2'
+            'waterfall plugin'
         ),
+        new TogglePlugin(MarksPlugin.name, { styles: {} }),
+        new MarksPlugin(marks),
+        new TogglePlugin(flame1, { styles: {} }),
+        new FlameChartPlugin({ data: currentData, colors }, flame1),
         new TogglePlugin(flame2, { styles: {} }),
         new FlameChartPlugin({ data: currentData, colors }, flame2),
+
     ],
 });
 
@@ -201,17 +201,17 @@ flameChart.on('select', (node, type) => {
     setNodeView(
         node
             ? `${type}\r\n${JSON.stringify(
-                  {
-                      ...node,
-                      source: {
-                          ...node.source,
-                          children: '[]',
-                      },
-                      parent: undefined,
-                  },
-                  null,
-                  '  '
-              )}`
+                {
+                    ...node,
+                    source: {
+                        ...node.source,
+                        children: '[]',
+                    },
+                    parent: undefined,
+                },
+                null,
+                '  '
+            )}`
             : ''
     );
 });

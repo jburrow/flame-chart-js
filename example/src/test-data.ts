@@ -6,7 +6,7 @@ const randomString = (length, minLength = 4) => {
     const rndLength = rnd(length, minLength);
     let str = '';
 
-    for (let i = rndLength; i--; ) {
+    for (let i = rndLength; i--;) {
         str += chars[rnd(chars.length - 1)];
     }
 
@@ -131,10 +131,10 @@ export const generateRandomTree = ({
         const timestamps =
             itemsCount > 1
                 ? Array(itemsCount - 1)
-                      .fill(null)
-                      .map(() => rndFloat(innerStart, innerEnd))
-                      .concat(innerStart, innerEnd)
-                      .sort((a, b) => a - b)
+                    .fill(null)
+                    .map(() => rndFloat(innerStart, innerEnd))
+                    .concat(innerStart, innerEnd)
+                    .sort((a, b) => a - b)
                 : [innerStart, innerEnd];
 
         items.forEach((item, index) => {
@@ -155,7 +155,7 @@ export const generateRandomTree = ({
             item.duration = end - item.start;
             item.name = randomString(14);
             item.type = currentType;
-            //item.parent = null;
+            // ??? fix ?item.parent = null;
 
             counter++;
         });

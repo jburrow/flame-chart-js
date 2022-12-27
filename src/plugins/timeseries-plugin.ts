@@ -50,11 +50,23 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {}
+    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {
+        const startPositionX = this.renderEngine.parent.positionX;
 
-    handleMouseUp() {}
+        this.interactionsEngine.setCursor('grabbing');
 
-    handleSelect(region: HitRegion<number> | null) {}
+        this.renderEngine.tryToChangePosition(deltaX);
+
+        if (startPositionX !== this.renderEngine.parent.positionX) {
+            this.renderEngine.parent.render();
+        }
+    }
+
+    handleMouseUp() {
+        this.interactionsEngine.clearCursor();
+    }
+
+    handleSelect(region: HitRegion<number> | null) { }
 
     setPositionY(y: number) {
         console.log('[setPositionY]', y);
@@ -113,16 +125,23 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     override renderTooltip() {
         if (this.hoveredRegion) {
-            const data = { ...this.hoveredRegion.data } as any;
+            const data = { ...this.hoveredRegion.data } as HitRegionData;
 
             // @ts-ignore data type on waterfall item is number but here it is something else?
             // data.data = this.data.find(({ index: i }) => index === i);
 
+            const round = (v) => (Math.round(v * 100) / 100).toString();
+
             const header = 'header';
-            const dur = data.ts;
-            const st = data.v;
+
             this.renderEngine.renderTooltipFromData(
-                [{ text: header }, { text: dur }, { text: st }],
+                [
+                    { text: header },
+                    {
+                        text: round(data.ts),
+                    },
+                    { text: round(data.v) },
+                ],
                 this.interactionsEngine.getGlobalMouse()
             );
             return true;
@@ -133,17 +152,14 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     override render() {
         const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
         const timestampStart = this.renderEngine.positionX;
-
-        // console.time('[timeseries-plugin][render]');
-
         this.renderEngine.setCtxColor(this.color);
-        //FIgue this out        this.renderEngine.setCtxFont("Consolas")
+
         this.renderEngine.ctx.beginPath();
 
         const d: [number, number][] = [];
 
         let beforeStart: [number, number] = [0, 0];
-        let afterEnd: [number, number] = [0, 0];
+
         let iii = 0;
         let minValue = Number.MAX_VALUE;
         let maxValue = Number.MIN_VALUE;
@@ -166,16 +182,11 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             }
         });
 
-        //TODO - consider a padding with here ...
         const padding = 5;
         const heightPerValueUnit = (this.height - padding) / (maxValue - minValue);
-        // console.log('[heightPerValueUnit]', heightPerValueUnit);
-
         const normalizeValue = (v: number) => {
             return this.height - v * heightPerValueUnit;
         };
-
-        afterEnd = this.data[iii + 1];
 
         this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
         this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), normalizeValue(beforeStart[1]));
@@ -186,7 +197,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
             this.interactionsEngine.addHitRegion(
                 RegionTypes.CLUSTER,
-                { ts, v },
+                { ts, v } as HitRegionData,
                 this.renderEngine.timeToPosition(ts),
                 normalizedValue,
                 normalizedValue,
@@ -210,7 +221,10 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             5,
             this.height - 5
         );
-
-        // console.timeEnd('[timeseries-plugin][render]');
     }
 }
+
+type HitRegionData = {
+    ts: number;
+    v: number;
+};
