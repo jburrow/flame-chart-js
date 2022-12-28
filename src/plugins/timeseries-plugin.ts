@@ -1,6 +1,6 @@
 import { OffscreenRenderEngine } from '../engines/offscreen-render-engine';
 import { SeparatedInteractionsEngine } from '../engines/separated-interactions-engine';
-import { CursorTypes, HitRegion, RegionTypes } from '../types';
+import { HitRegion, RegionTypes } from '../types';
 import UIPlugin from './ui-plugin';
 
 export type TimeseriesPoint = [number, number];
@@ -27,7 +27,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     maxValue: number;
     hoveredRegion: HitRegion<{}> | null = null;
     selectedRegion: HitRegion<{}> | null = null;
-    summary: TimeseriesPointsSummary = null;
+    summary: TimeseriesPointsSummary | null = null;
 
     constructor(name: string, color: string, data: TimeseriesPoint[], maxValue = 100) {
         super();
@@ -46,16 +46,16 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
         this.interactionsEngine.on('change-position', this.handlePositionChange.bind(this));
         this.interactionsEngine.on('hover', this.handleHover.bind(this));
-        this.interactionsEngine.on('select', this.handleSelect.bind(this));
+
         this.interactionsEngine.on('up', this.handleMouseUp.bind(this));
     }
 
-    handlePositionChange({ deltaX, deltaY }: { deltaX: number; deltaY: number }) {
+    handlePositionChange(position: { deltaX: number }) {
         const startPositionX = this.renderEngine.parent.positionX;
 
         this.interactionsEngine.setCursor('grabbing');
 
-        this.renderEngine.tryToChangePosition(deltaX);
+        this.renderEngine.tryToChangePosition(position.deltaX);
 
         if (startPositionX !== this.renderEngine.parent.positionX) {
             this.renderEngine.parent.render();
@@ -64,18 +64,6 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     handleMouseUp() {
         this.interactionsEngine.clearCursor();
-    }
-
-    handleSelect(region: HitRegion<number> | null) {}
-
-    setPositionY(y: number) {
-        console.log('[setPositionY]', y);
-    }
-
-    override setSettings(settings) {
-        // this.styles = mergeObjects(defaultWaterfallPluginStyles, styles);
-        // this.height = this.styles.defaultHeight;
-        // this.positionY = 0;
     }
 
     setData(data: TimeseriesPoint[]) {
@@ -219,9 +207,9 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
 
-        this.renderEngine.ctx.strokeText(`${Math.round(maxValue)} (${Math.round(this.summary.max)})`, 5, 0 + 10);
+        this.renderEngine.ctx.strokeText(`${Math.round(maxValue)} (${Math.round(this.summary?.max ?? 0)})`, 5, 0 + 10);
         this.renderEngine.ctx.strokeText(
-            `${Math.round(minValue)} (${Math.round(this.summary.min)})`,
+            `${Math.round(minValue)} (${Math.round(this.summary?.min ?? 0)})`,
             5,
             this.height - 5
         );

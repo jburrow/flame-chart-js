@@ -1,5 +1,3 @@
-import { FlameChart } from '../../src/flame-chart';
-
 const wrapper = document.getElementById('wrapper');
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 

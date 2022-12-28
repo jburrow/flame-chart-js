@@ -153,8 +153,8 @@ const testIntervals: WaterfallIntervals = {
     ],
 };
 
-const timeseriesData = [];
-let ii = 0;
+const timeseriesData: [number, number][] = [];
+
 const period = inputs.end - inputs.start;
 const kk = period / 100.0;
 
@@ -162,12 +162,10 @@ for (let idx = inputs.start; idx < inputs.end; idx += kk) {
     const i = Math.random() * 1000;
     timeseriesData.push([idx, i]);
     timeseriesData.push([idx + kk / 2, i]);
-    ii++;
 }
 console.log('[timeseriesData]', timeseriesData);
 
 const timeseries1 = 'time-series-1';
-const timeseries2 = 'time-series-2';
 const flame1 = 'flame';
 const flame2 = 'flame-baseline';
 
