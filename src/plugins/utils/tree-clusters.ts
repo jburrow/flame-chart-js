@@ -5,7 +5,7 @@ import {
     Data,
     FlatTree,
     FlatTreeNode,
-    Node,
+    FlameNode,
 } from '../../types';
 
 const MIN_BLOCK_SIZE = 1;
@@ -14,8 +14,8 @@ const MIN_CLUSTER_SIZE = MIN_BLOCK_SIZE * 2 + STICK_DISTANCE;
 
 export const walk = (
     treeList: Data,
-    cb: (child: Node, parent: any, level: number) => FlatTreeNode,
-    parent: FlatTreeNode | Node | null = null,
+    cb: (child: FlameNode, parent: any, level: number) => FlatTreeNode,
+    parent: FlatTreeNode | FlameNode | null = null,
     level = 0
 ) => {
     treeList.forEach((child) => {

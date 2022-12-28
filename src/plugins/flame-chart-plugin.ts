@@ -146,7 +146,7 @@ export class FlameChartPlugin extends UIPlugin {
         return null;
     }
 
-    getColor(type: string = '_default', defaultColor?: string) {
+    getColor(type = '_default', defaultColor?: string) {
         if (defaultColor) {
             return defaultColor;
         } else if (this.colors[type]) {

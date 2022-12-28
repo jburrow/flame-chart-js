@@ -185,8 +185,8 @@ export class WaterfallPlugin extends UIPlugin<WaterfallPluginStyles> {
                 const { data: index } = this.hoveredRegion;
                 const data = { ...this.hoveredRegion };
 
-                // @ts-ignore data type on waterfall item is number but here it is something else?
-                data.data = this.data.find(({ index: i }) => index === i);
+                // TODO @ts-ignore data type on waterfall item is number but here it is something else?
+                data.data = this.data.find(({ index: i }) => index === i) as unknown as number;
 
                 this.renderEngine.options.tooltip(data, this.renderEngine, this.interactionsEngine.getGlobalMouse());
             } else {

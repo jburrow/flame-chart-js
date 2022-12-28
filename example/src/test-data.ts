@@ -1,4 +1,4 @@
-import { Node } from '../../src/index';
+import { FlameNode } from '../../src/index';
 
 const chars = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
 
@@ -112,7 +112,7 @@ export const generateRandomTree = ({
     thinning,
     colorsMonotony,
     colorsCount,
-}: TreeConfig): Node[] => {
+}: TreeConfig): FlameNode[] => {
     const { root: nestingArrays } = generateRandomNesting(count, minChild, maxChild, null);
     const types = Array(colorsCount)
         .fill(null)
@@ -121,7 +121,7 @@ export const generateRandomTree = ({
     let typesCounter = 0;
     let currentType = types[typesCounter];
 
-    const mappedNestingArrays = map(nestingArrays, (items: Node[], parent: Node) => {
+    const mappedNestingArrays = map(nestingArrays, (items: FlameNode[], parent: FlameNode) => {
         const itemsCount = items.length;
         const innerStart = parent?.start ? parent.start : start;
         const innerEnd = parent?.duration ? innerStart + parent?.duration : end;
