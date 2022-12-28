@@ -178,7 +178,7 @@ const flameChart = new FlameChart({
         new TimeframeSelectorPlugin(currentData, { styles: {} }),
         new TogglePlugin(timeseries1, { styles: {} }),
         new TimeseriesPlugin(timeseries1, 'red', timeseriesData),
-        new TogglePlugin("waterfall plugin", { styles: {} }),
+        new TogglePlugin('waterfall plugin', { styles: {} }),
         new WaterfallPlugin(
             {
                 items: testItems,
@@ -193,7 +193,6 @@ const flameChart = new FlameChart({
         new FlameChartPlugin({ data: currentData, colors }, flame1),
         new TogglePlugin(flame2, { styles: {} }),
         new FlameChartPlugin({ data: currentData, colors }, flame2),
-
     ],
 });
 
@@ -201,17 +200,17 @@ flameChart.on('select', (node, type) => {
     setNodeView(
         node
             ? `${type}\r\n${JSON.stringify(
-                {
-                    ...node,
-                    source: {
-                        ...node.source,
-                        children: '[]',
-                    },
-                    parent: undefined,
-                },
-                null,
-                '  '
-            )}`
+                  {
+                      ...node,
+                      source: {
+                          ...node.source,
+                          children: '[]',
+                      },
+                      parent: undefined,
+                  },
+                  null,
+                  '  '
+              )}`
             : ''
     );
 });
