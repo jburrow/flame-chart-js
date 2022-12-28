@@ -113,22 +113,15 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
     override renderTooltip() {
         if (this.hoveredRegion) {
-            const data = { ...this.hoveredRegion.data } as HitRegionData;
-
-            // @ts-ignore data type on waterfall item is number but here it is something else?
-            // data.data = this.data.find(({ index: i }) => index === i);
-
-            const round = (v) => (Math.round(v * 100) / 100).toString();
-
-            const header = 'header';
+            const round = (v) => Math.round(v * 100) / 100;
+            const data = this.hoveredRegion.data as HitRegionData;
 
             this.renderEngine.renderTooltipFromData(
                 [
-                    { text: header },
+                    { text: `Value: ${round(data.v)}` },
                     {
-                        text: round(data.ts),
+                        text: `Timestamp: ${round(data.ts)}ms`,
                     },
-                    { text: round(data.v) },
                 ],
                 this.interactionsEngine.getGlobalMouse()
             );
@@ -138,6 +131,10 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     }
 
     override render() {
+        if (this.data?.length === 0) {
+            return;
+        }
+
         const timestampEnd = this.renderEngine.positionX + this.renderEngine.getRealView();
         const timestampStart = this.renderEngine.positionX;
         this.renderEngine.setCtxColor(this.color);
@@ -147,7 +144,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         const d: [number, number][] = [];
 
         let firstIdx = 0;
-        let lastIdx = 0;
+
         let minValue = Number.MAX_VALUE;
         let maxValue = Number.MIN_VALUE;
 
@@ -158,7 +155,6 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
             if (ts > timestampStart && ts < timestampEnd) {
                 d.push([ts, v]);
-                lastIdx = idx;
 
                 if (v < minValue) {
                     minValue = v;
@@ -170,48 +166,65 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             }
         });
 
+        const firstValue = this.data[firstIdx][1];
+        if (firstValue === undefined) {
+            return;
+        }
+        if (d.length < 2) {
+            maxValue = firstValue + 10;
+            minValue = firstValue - 10;
+        }
+
         const padding = 5;
         const heightPerValueUnit = (this.height - padding) / (maxValue - minValue);
+
         const normalizeValue = (v: number) => {
             return this.height - v * heightPerValueUnit;
         };
 
+        let normalizedValue = normalizeValue(firstValue);
+
         this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
-        this.renderEngine.ctx.lineTo(
-            this.renderEngine.timeToPosition(timestampStart),
-            normalizeValue(this.data[firstIdx][1])
-        );
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), normalizedValue);
+
+        let lastTimeToPosition = 0;
+        let timeToPosition = 0;
 
         for (const [ts, v] of d) {
-            const normalizedValue = normalizeValue(v);
-            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(ts), normalizedValue);
-
+            normalizedValue = normalizeValue(v);
+            timeToPosition = this.renderEngine.timeToPosition(ts);
+            this.renderEngine.ctx.lineTo(timeToPosition, normalizedValue);
             this.interactionsEngine.addHitRegion(
                 RegionTypes.CLUSTER,
                 { ts, v } as HitRegionData,
-                this.renderEngine.timeToPosition(ts),
-                normalizedValue,
-                normalizedValue,
+                lastTimeToPosition,
+                0,
+                timeToPosition - lastTimeToPosition,
                 this.height
             );
+
+            lastTimeToPosition = timeToPosition;
         }
 
-        lastIdx = lastIdx + 1 < this.data.length ? lastIdx + 1 : this.data.length;
-        this.renderEngine.ctx.lineTo(
-            this.renderEngine.timeToPosition(timestampEnd),
-            normalizeValue(this.data[lastIdx][1])
-        );
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), normalizedValue);
+
         this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);
 
         this.renderEngine.ctx.closePath();
         this.renderEngine.ctx.stroke();
         this.renderEngine.ctx.fill();
 
-        this.renderEngine.ctx.strokeText(`${Math.round(maxValue)} (${Math.round(this.summary?.max ?? 0)})`, 5, 0 + 10);
+        const textHeight = 10;
+        const leftMargin = 5;
+        this.renderEngine.ctx.strokeText(
+            `${Math.round(maxValue)} (${Math.round(this.summary?.max ?? 0)})`,
+            leftMargin,
+            textHeight
+        );
         this.renderEngine.ctx.strokeText(
             `${Math.round(minValue)} (${Math.round(this.summary?.min ?? 0)})`,
-            5,
-            this.height - 5
+            leftMargin,
+            this.height - textHeight - 5
         );
     }
 }
