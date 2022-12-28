@@ -158,19 +158,23 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
         const d: [number, number][] = [];
 
-        let beforeStart: [number, number] = [0, 0];
-
-        let iii = 0;
+        let firstIdx = 0;
+        let lastIdx = 0;
         let minValue = Number.MAX_VALUE;
         let maxValue = Number.MIN_VALUE;
 
         this.data.forEach(([ts, v], idx) => {
+
+            if (ts > timestampStart && firstIdx === 0) {
+
+                firstIdx = idx;
+
+            }
+
             if (ts > timestampStart && ts < timestampEnd) {
-                if (d.length === 0) {
-                    beforeStart = this.data[idx - 1];
-                }
+
                 d.push([ts, v]);
-                iii = idx;
+                lastIdx = idx;
 
                 if (v < minValue) {
                     minValue = v;
@@ -182,6 +186,8 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             }
         });
 
+
+
         const padding = 5;
         const heightPerValueUnit = (this.height - padding) / (maxValue - minValue);
         const normalizeValue = (v: number) => {
@@ -189,7 +195,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         };
 
         this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), normalizeValue(beforeStart[1]));
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), normalizeValue(this.data[firstIdx][1]));
 
         for (const [ts, v] of d) {
             const normalizedValue = normalizeValue(v);
@@ -205,11 +211,10 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             );
         }
 
-        if (d.length > 0) {
-            const [ts, v] = d[d.length - 1];
-            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height - v);
-            this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);
-        }
+
+        lastIdx = lastIdx + 1 < this.data.length ? lastIdx + 1 : this.data.length;
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), normalizeValue(this.data[lastIdx][1]));
+        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);
 
         this.renderEngine.ctx.closePath();
         this.renderEngine.ctx.stroke();
