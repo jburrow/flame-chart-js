@@ -100,8 +100,8 @@ const addStylesInputs = (inputsContainer, styles: Record<string, {}>) => {
     inputsContainer.appendChild(fragment);
 };
 
-importButton.addEventListener('click', () => {
-    importInput.click();
+importButton?.addEventListener('click', () => {
+    importInput?.click();
 });
 
 const download = (content, fileName, contentType) => {
@@ -114,7 +114,7 @@ const download = (content, fileName, contentType) => {
     a.click();
 };
 
-export const initView = (flameChart: FlameChart, config, styles: Record<string, {}>) => {
+export const initView = (config, styles: Record<string, {}>) => {
     addInputs(dataInputsContainer, config);
     addStylesInputs(stylesInputsContainer, styles);
 };
@@ -127,17 +127,19 @@ export const getInputValues = (config) => {
 };
 
 export const setNodeView = (text) => {
-    nodeView.innerHTML = text;
+    if (nodeView !== null) {
+        nodeView.innerHTML = text;
+    }
 };
 
 export const onApplyStyles = (cb) => {
-    updateStylesButton.addEventListener('click', () => {
+    updateStylesButton?.addEventListener('click', () => {
         cb(customStyles);
     });
 };
 
 export const onUpdate = (cb) => {
-    updateButton.addEventListener('click', () => {
+    updateButton?.addEventListener('click', () => {
         updateButton.innerHTML = 'Generating...';
         updateButton.setAttribute('disabled', 'true');
 
@@ -150,7 +152,7 @@ export const onUpdate = (cb) => {
 };
 
 export const onExport = (cb) => {
-    exportButton.addEventListener('click', () => {
+    exportButton?.addEventListener('click', () => {
         const data = cb();
 
         download(data, 'data.json', 'application/json');
@@ -158,13 +160,16 @@ export const onExport = (cb) => {
 };
 
 export const onImport = (cb) => {
-    importInput.addEventListener('change', (e) => {
-        (e.target as HTMLInputElement).files[0].text().then(cb);
+    importInput?.addEventListener('change', (e) => {
+        const input = e.target as HTMLInputElement;
+        if (input?.files?.length) {
+            input.files[0].text().then(cb);
+        }
     });
 };
 
 export const getWrapperWH = () => {
-    const style = window.getComputedStyle(wrapper, null);
+    const style = window.getComputedStyle(wrapper as any as Element, null);
 
     return [parseInt(style.getPropertyValue('width')), parseInt(style.getPropertyValue('height')) - 3];
 };

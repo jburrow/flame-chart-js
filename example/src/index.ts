@@ -245,7 +245,7 @@ onExport(() => {
 });
 
 initQuery(flameChart);
-initView(flameChart, treeConfig, {
+initView(treeConfig, {
     main: defaultRenderStyles,
     timeGrid: defaultTimeGridStyles,
     timeGridPlugin: defaultTimeGridPluginStyles,

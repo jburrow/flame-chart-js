@@ -19,7 +19,7 @@ const rndFloat = (max, min = 0) => Math.random() * (max - min) + min;
 type Level = {
     children: Level[];
     parent: Level;
-};
+} | null;
 
 type Layer = { rest: number; items: Level[] };
 
@@ -27,7 +27,7 @@ const generateRandomLevel = (count: number, minChild = 1, maxChild = 10, parent:
     const childrenCount = count ? rnd(Math.min(count, maxChild), Math.min(count, minChild)) : 0;
     const items = Array(childrenCount)
         .fill(null)
-        .map(() => ({ children: [], parent }));
+        .map((): Level => ({ children: [], parent }));
     const rest = count - childrenCount;
 
     if (parent) {
@@ -41,8 +41,8 @@ const generateRandomLevel = (count: number, minChild = 1, maxChild = 10, parent:
 };
 
 const generateRandomNesting = (count: number, minChild: number, maxChild: number, parent: Level) => {
-    const levels = [];
-    let currentLevel = 0;
+    const levels: any[] = [];
+
     let rest = count;
     let isStopped = false;
 
@@ -54,7 +54,7 @@ const generateRandomNesting = (count: number, minChild: number, maxChild: number
             rest = layer.rest;
         } else {
             const level: Level[][] = levels[levels.length - 1];
-            const innerLevel = [];
+            const innerLevel: Level[][] = [];
 
             for (const ll of level) {
                 for (const l of ll) {
@@ -71,8 +71,6 @@ const generateRandomNesting = (count: number, minChild: number, maxChild: number
                 levels.push(innerLevel);
             }
         }
-
-        currentLevel++;
     }
 
     console.log(
