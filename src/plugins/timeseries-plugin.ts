@@ -131,7 +131,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
     }
 
     override render() {
-        if (this.data?.length === 0) {
+        if (this.data?.length === 0 || !this.summary) {
             return;
         }
 
@@ -145,9 +145,6 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
         let firstIdx = 0;
 
-        let minValue = Number.MAX_VALUE;
-        let maxValue = Number.MIN_VALUE;
-
         this.data.forEach(([ts, v], idx) => {
             if (ts > timestampStart && firstIdx === 0) {
                 firstIdx = idx;
@@ -155,45 +152,38 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
             if (ts > timestampStart && ts < timestampEnd) {
                 d.push([ts, v]);
-
-                if (v < minValue) {
-                    minValue = v;
-                }
-
-                if (v > maxValue) {
-                    maxValue = v;
-                }
             }
         });
 
-        const firstValue = this.data[firstIdx][1];
+        const firstValue = this.data[firstIdx];
         if (firstValue === undefined) {
             return;
         }
-        if (d.length < 2) {
-            maxValue = firstValue + 10;
-            minValue = firstValue - 10;
-        }
 
         const padding = 5;
-        const heightPerValueUnit = (this.height - padding) / (maxValue - minValue);
+        const heightPerValueUnit = (this.height - padding) / (this.summary.max - this.summary.min);
 
         const normalizeValue = (v: number) => {
             return this.height - v * heightPerValueUnit;
         };
 
-        let normalizedValue = normalizeValue(firstValue);
-
-        this.renderEngine.ctx.moveTo(this.renderEngine.timeToPosition(timestampStart), this.height);
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampStart), normalizedValue);
-
+        let lastTs = firstValue[0];
+        let lastValue = firstValue[1];
+        let normalizedValue = normalizeValue(firstValue[1]);
+        let lastNormalizedValue = normalizedValue;
         let lastTimeToPosition = 0;
-        let timeToPosition = 0;
+        let timeToPosition = this.renderEngine.timeToPosition(timestampStart);
+        this.renderEngine.ctx.moveTo(timeToPosition, this.height);
+        this.renderEngine.ctx.lineTo(timeToPosition, normalizedValue);
 
         for (const [ts, v] of d) {
-            normalizedValue = normalizeValue(v);
             timeToPosition = this.renderEngine.timeToPosition(ts);
+
+            this.renderEngine.ctx.lineTo(timeToPosition, lastNormalizedValue);
+
+            normalizedValue = normalizeValue(v);
             this.renderEngine.ctx.lineTo(timeToPosition, normalizedValue);
+
             this.interactionsEngine.addHitRegion(
                 RegionTypes.CLUSTER,
                 { ts, v } as HitRegionData,
@@ -204,11 +194,23 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
             );
 
             lastTimeToPosition = timeToPosition;
+            lastNormalizedValue = normalizedValue;
+            lastValue = v;
+            lastTs = ts;
         }
 
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), normalizedValue);
+        timeToPosition = this.renderEngine.timeToPosition(timestampEnd);
+        this.interactionsEngine.addHitRegion(
+            RegionTypes.CLUSTER,
+            { ts: lastTs, v: lastValue } as HitRegionData,
+            lastTimeToPosition,
+            0,
+            timeToPosition - lastTimeToPosition,
+            this.height
+        );
 
-        this.renderEngine.ctx.lineTo(this.renderEngine.timeToPosition(timestampEnd), this.height);
+        this.renderEngine.ctx.lineTo(timeToPosition, normalizedValue);
+        this.renderEngine.ctx.lineTo(timeToPosition, this.height);
 
         this.renderEngine.ctx.closePath();
         this.renderEngine.ctx.stroke();
@@ -216,13 +218,9 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
 
         const textHeight = 10;
         const leftMargin = 5;
+        this.renderEngine.ctx.strokeText(`${Math.round(this.summary?.max ?? 0)}`, leftMargin, textHeight);
         this.renderEngine.ctx.strokeText(
-            `${Math.round(maxValue)} (${Math.round(this.summary?.max ?? 0)})`,
-            leftMargin,
-            textHeight
-        );
-        this.renderEngine.ctx.strokeText(
-            `${Math.round(minValue)} (${Math.round(this.summary?.min ?? 0)})`,
+            `${Math.round(this.summary?.min ?? 0)}`,
             leftMargin,
             this.height - textHeight - 5
         );

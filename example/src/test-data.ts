@@ -21,6 +21,8 @@ type Level = {
     parent: Level;
 } | null;
 
+export type Levels = Level[] | null;
+
 type Layer = { rest: number; items: Level[] };
 
 const generateRandomLevel = (count: number, minChild = 1, maxChild = 10, parent: Level): Layer => {
@@ -79,8 +81,8 @@ const generateRandomNesting = (count: number, minChild: number, maxChild: number
     );
 
     return {
-        root: levels[0][0],
-        rest,
+        root: levels[0][0] as Level,
+        rest: rest,
     };
 };
 
@@ -113,7 +115,7 @@ export const generateRandomTree = ({
     colorsMonotony,
     colorsCount,
 }: TreeConfig): FlameNode[] => {
-    const { root: nestingArrays } = generateRandomNesting(count, minChild, maxChild, null);
+    const rootNodes = generateRandomNesting(count, minChild, maxChild, null);
     const types = Array(colorsCount)
         .fill(null)
         .map(() => randomString(10));
@@ -121,7 +123,7 @@ export const generateRandomTree = ({
     let typesCounter = 0;
     let currentType = types[typesCounter];
 
-    const mappedNestingArrays = map(nestingArrays, (items: FlameNode[], parent: FlameNode) => {
+    const mappedNestingArrays = map(rootNodes.root, (items: FlameNode[], parent: FlameNode) => {
         const itemsCount = items.length;
         const innerStart = parent?.start ? parent.start : start;
         const innerEnd = parent?.duration ? innerStart + parent?.duration : end;
@@ -161,7 +163,7 @@ export const generateRandomTree = ({
         return items;
     });
 
-    console.log('Data:', mappedNestingArrays);
+    console.log('[generateRandomTree]', mappedNestingArrays);
 
     return mappedNestingArrays;
 };
