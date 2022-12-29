@@ -1,27 +1,27 @@
-import { Data, FlameChart, WaterfallIntervals } from '../../src/index';
-import { defaultTimeGridStyles } from '../../src/engines/time-grid';
 import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
+import { defaultTimeGridStyles } from '../../src/engines/time-grid';
+import { FlameChart, FlameNode } from '../../src/index';
+import { FlameChartPlugin } from '../../src/plugins/flame-chart-plugin';
+import { MarksPlugin } from '../../src/plugins/marks-plugin';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
 import TimeframeSelectorPlugin, {
     defaultTimeframeSelectorPluginStyles,
 } from '../../src/plugins/timeframe-selector-plugin';
+import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
 import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin';
 import { defaultWaterfallPluginStyles, WaterfallPlugin } from '../../src/plugins/waterfall-plugin';
-import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
-import { FlameChartPlugin } from '../../src/plugins/flame-chart-plugin';
-import { MarksPlugin } from '../../src/plugins/marks-plugin';
-import { generateRandomTree } from './test-data';
-import { query, initQuery } from './query';
+import { initQuery, query } from './query';
+import { generateRandomTree, generateTimeseriesData, waterfallIntervals, waterfallItems } from './test-data';
 import {
-    initView,
+    getCanvas,
     getInputValues,
-    setNodeView,
+    getWrapperWH,
+    initView,
     onApplyStyles,
-    onUpdate,
     onExport,
     onImport,
-    getWrapperWH,
-    getCanvas,
+    onUpdate,
+    setNodeView,
 } from './view';
 
 export interface TreeConfigItem {
@@ -70,7 +70,33 @@ const colors = {
 const inputs = getInputValues(treeConfig);
 const generateData = () => generateRandomTree(inputs);
 
-let currentData: Data = query ? [] : generateData();
+let currentData: FlameNode[] = query ? [] : generateData();
+
+// currentData = [
+//     {
+//         name: 'testing',
+//         start: inputs.start,
+//         duration: 200,
+//         color: 'yellow',
+//         children: [
+//             { name: 'testing', start: inputs.start + 50, duration: 50, color: 'orange' },
+//             { name: 'testing', start: inputs.start + 100, duration: 50, color: 'orange' },
+//         ],
+//     },
+// ];
+
+const baselineCurrentData = [
+    {
+        name: 'testing',
+        start: inputs.start,
+        duration: 225,
+        color: 'yellow',
+        children: [
+            { name: 'testing', start: inputs.start + 50, duration: 75, color: 'orange' },
+            { name: 'testing', start: inputs.start + 125, duration: 75, color: 'orange' },
+        ],
+    },
+];
 
 const [width, height] = getWrapperWH();
 const canvas = getCanvas();
@@ -78,92 +104,7 @@ const canvas = getCanvas();
 canvas.width = width;
 canvas.height = height;
 
-const testItems = [
-    {
-        name: 'foo',
-        intervals: 'default',
-        timing: {
-            requestStart: 2050,
-            responseStart: 2500,
-            responseEnd: 2600,
-        },
-    },
-    {
-        name: 'bar',
-        intervals: 'default',
-        timing: {
-            requestStart: 2120,
-            responseStart: 2180,
-            responseEnd: 2300,
-        },
-    },
-    {
-        name: 'bar2',
-        intervals: 'default',
-        timing: {
-            requestStart: 2120,
-            responseStart: 2180,
-            responseEnd: 2300,
-        },
-    },
-    {
-        name: 'bar3',
-        intervals: 'default',
-        timing: {
-            requestStart: 2130,
-            responseStart: 2180,
-            responseEnd: 2320,
-        },
-    },
-    {
-        name: 'bar4',
-        intervals: 'default',
-        timing: {
-            requestStart: 2300,
-            responseStart: 2350,
-            responseEnd: 2400,
-        },
-    },
-    {
-        name: 'bar5',
-        intervals: 'default',
-        timing: {
-            requestStart: 2500,
-            responseStart: 2520,
-            responseEnd: 2550,
-        },
-    },
-];
-const testIntervals: WaterfallIntervals = {
-    default: [
-        {
-            name: 'waiting',
-            color: 'rgb(207,196,152)',
-            type: 'block',
-            start: 'requestStart',
-            end: 'responseStart',
-        },
-        {
-            name: 'downloading',
-            color: 'rgb(207,180,81)',
-            type: 'block',
-            start: 'responseStart',
-            end: 'responseEnd',
-        },
-    ],
-};
-
-const timeseriesData: [number, number][] = [];
-
-const period = inputs.end - inputs.start;
-const kk = period / 100.0;
-
-for (let idx = inputs.start; idx < inputs.end; idx += kk) {
-    const i = Math.random() * 1000;
-    timeseriesData.push([idx, i]);
-    timeseriesData.push([idx + kk / 2, i]);
-}
-console.log('[timeseriesData]', timeseriesData);
+const timeseriesData = generateTimeseriesData(inputs);
 
 const timeseries1 = 'time-series-1';
 const flame1 = 'flame';
@@ -179,8 +120,8 @@ const flameChart = new FlameChart({
         new TogglePlugin('waterfall plugin', { styles: {} }),
         new WaterfallPlugin(
             {
-                items: testItems,
-                intervals: testIntervals,
+                items: waterfallItems,
+                intervals: waterfallIntervals,
             },
             { styles: {} },
             'waterfall plugin'
@@ -190,27 +131,12 @@ const flameChart = new FlameChart({
         new TogglePlugin(flame1, { styles: {} }),
         new FlameChartPlugin({ data: currentData, colors }, flame1),
         new TogglePlugin(flame2, { styles: {} }),
-        new FlameChartPlugin({ data: currentData, colors }, flame2),
+        new FlameChartPlugin({ data: baselineCurrentData, colors }, flame2),
     ],
 });
 
-flameChart.on('select', (node, type) => {
-    setNodeView(
-        node
-            ? `${type}\r\n${JSON.stringify(
-                  {
-                      ...node,
-                      source: {
-                          ...node.source,
-                          children: '[]',
-                      },
-                      parent: undefined,
-                  },
-                  null,
-                  '  '
-              )}`
-            : ''
-    );
+flameChart.on('select', (node: FlameNode, type: string) => {
+    setNodeView(node ? `${type}\r\n${JSON.stringify(node, null, 2)}` : '');
 });
 
 window.addEventListener('resize', () => {
