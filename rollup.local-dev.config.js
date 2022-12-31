@@ -2,7 +2,9 @@
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 
-import config from "./rollup.config";
+import {generate} from "./rollup.config";
+
+const config = generate({noEmitOnError:false});
 
 export default {
     ...config,

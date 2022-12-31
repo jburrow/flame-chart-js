@@ -779,19 +779,19 @@
 // ];
 
 // describe('tree clusters', () => {
-//     // it('flatTree', () => {
-//     //     expect(flatTree(data)).toStrictEqual(flatTreeData);
-//     // });
-//     // it('metaClusterizeFlatTree', () => {
-//     //     expect(metaClusterizeFlatTree(flatTreeData)).toStrictEqual(metaClusterizedFlatTree);
-//     // });
-//     // it('clusterizeFlatTree', () => {
-//     //     const result = clusterizeFlatTree(metaClusterizedFlatTree, 1, 0, 500);
-//     //     expect(result).toStrictEqual(clusterizedFlatTree);
-//     // });
-//     // it('reclusterizeClusteredFlatTree', () => {
-//     //     const result = reclusterizeClusteredFlatTree(clusterizedFlatTree, 1, 0, 500);
-//     //     expect(result).toStrictEqual(reclusterizedClusteredFlatTree);
-//     //     expect(clusterizedFlatTree).toStrictEqual(reclusterizedClusteredFlatTree);
-//     // });
+//     it('flatTree', () => {
+//         // expect(flatTree(data)).toStrictEqual(flatTreeData);
+//     });
+//     it('metaClusterizeFlatTree', () => {
+//         // expect(metaClusterizeFlatTree(flatTreeData as any as unknow)).toStrictEqual(metaClusterizedFlatTree);
+//     });
+//     it('clusterizeFlatTree', () => {
+//         // const result = clusterizeFlatTree(metaClusterizedFlatTree, 1, 0, 500);
+//         // expect(result).toStrictEqual(clusterizedFlatTree);
+//     });
+//     it('reclusterizeClusteredFlatTree', () => {
+//         // const result = reclusterizeClusteredFlatTree(clusterizedFlatTree, 1, 0, 500);
+//         // expect(result).toStrictEqual(reclusterizedClusteredFlatTree);
+//         // expect(clusterizedFlatTree).toStrictEqual(reclusterizedClusteredFlatTree);
+//     });
 // });

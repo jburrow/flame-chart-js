@@ -1,28 +1,27 @@
-import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
+import { FlameChart, FlameChartPlugin, FlameNode, MarksPlugin } from '../../src/index';
 import { defaultTimeGridStyles } from '../../src/engines/time-grid';
-import { FlameChart, FlameNode } from '../../src/index';
-import { FlameChartPlugin } from '../../src/plugins/flame-chart-plugin';
-import { MarksPlugin } from '../../src/plugins/marks-plugin';
+import { defaultRenderStyles } from '../../src/engines/basic-render-engine';
 import { defaultTimeGridPluginStyles } from '../../src/plugins/time-grid-plugin';
 import TimeframeSelectorPlugin, {
     defaultTimeframeSelectorPluginStyles,
 } from '../../src/plugins/timeframe-selector-plugin';
-import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
 import TogglePlugin, { defaultTogglePluginStyles } from '../../src/plugins/toggle-plugin';
-import { defaultWaterfallPluginStyles, WaterfallPlugin } from '../../src/plugins/waterfall-plugin';
-import { initQuery, query } from './query';
+import WaterfallPlugin, { defaultWaterfallPluginStyles } from '../../src/plugins/waterfall-plugin';
+
 import { generateRandomTree, generateTimeseriesData, waterfallIntervals, waterfallItems } from './test-data';
+import { query, initQuery } from './query';
 import {
-    getCanvas,
-    getInputValues,
-    getWrapperWH,
     initView,
+    getInputValues,
+    setNodeView,
     onApplyStyles,
+    onUpdate,
     onExport,
     onImport,
-    onUpdate,
-    setNodeView,
+    getWrapperWH,
+    getCanvas,
 } from './view';
+import { TimeseriesPlugin } from '../../src/plugins/timeseries-plugin';
 
 export interface TreeConfigItem {
     name: string;
