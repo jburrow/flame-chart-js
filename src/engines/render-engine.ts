@@ -218,7 +218,7 @@ export class RenderEngine extends BasicRenderEngine {
         engine?.clear();
 
         if (!engine.collapsed) {
-            const isFullRendered = plugin?.render?.();
+            const isFullRendered = plugin?.render?.() ?? false;
 
             if (!isFullRendered) {
                 engine.standardRender();

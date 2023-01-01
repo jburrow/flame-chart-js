@@ -42,7 +42,7 @@ export class FlameChartPlugin extends UIPlugin {
     actualClusterizedFlatTree: ClusterizedFlatTree = [];
     initialClusterizedFlatTree: ClusterizedFlatTree = [];
     lastUsedColor: string | null = null;
-    renderChartTimeout = -1;
+    renderChartTimeout: unknown = null;
 
     constructor({ data, colors = {} }: { data: Data; colors: Colors | undefined }, name = 'flameChartPlugin') {
         super();
@@ -146,7 +146,7 @@ export class FlameChartPlugin extends UIPlugin {
         return null;
     }
 
-    getColor(type: string = '_default', defaultColor?: string) {
+    getColor(type = '_default', defaultColor?: string) {
         if (defaultColor) {
             return defaultColor;
         } else if (this.colors[type]) {
@@ -301,7 +301,7 @@ export class FlameChartPlugin extends UIPlugin {
             this.renderEngine.addStrokeToRenderQueue('green', x, y, w, this.renderEngine.blockHeight);
         }
 
-        clearTimeout(this.renderChartTimeout);
+        clearTimeout(this.renderChartTimeout as number);
 
         this.renderChartTimeout = setTimeout(() => {
             this.interactionsEngine.clearHitRegions();

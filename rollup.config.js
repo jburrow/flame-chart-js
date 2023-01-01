@@ -6,7 +6,7 @@ import { template } from './example/src/template.js';
 import typescript from '@rollup/plugin-typescript';
 import builtins from 'rollup-plugin-node-builtins';
 
-export default {
+export function generate(compilerOptions={}) {return{
     input: './example/src/index.ts',
     output: {
         dir: './example/dist',
@@ -16,7 +16,7 @@ export default {
         sourcemap: 'inline',
     },
     plugins: [
-        typescript({ compilerOptions: { outDir: './example/dist' } }),        
+        typescript({ compilerOptions: { outDir: './example/dist', ...(compilerOptions||{})} }),
         resolve({
             browser: true,
             preferBuiltins: true,
@@ -32,3 +32,6 @@ export default {
         }),
     ],
 };
+
+}
+export default generate();

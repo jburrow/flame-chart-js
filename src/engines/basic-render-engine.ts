@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { mergeObjects } from '../utils';
-import { Dots, Mouse, RectRenderQueue, Stroke, Text, TooltipField } from '../types';
+import { Dots, Mouse, RectRenderQueue, Stroke, FlameText, TooltipField } from '../types';
 import { OffscreenRenderEngine } from './offscreen-render-engine';
 import { RenderEngine } from './render-engine';
 
@@ -91,12 +91,12 @@ export class BasicRenderEngine extends EventEmitter {
     placeholderWidth = 0;
     avgCharWidth = 0;
     minTextWidth = 0;
-    textRenderQueue: Text[] = [];
+    textRenderQueue: FlameText[] = [];
     strokeRenderQueue: Stroke[] = [];
     rectRenderQueue: RectRenderQueue = {};
     lastUsedColor: string | null = null;
     lastUsedStrokeColor: string | null = null;
-    zoom: number = 0;
+    zoom = 0;
     positionX = 0;
     min = 0;
     max = 0;

@@ -9,16 +9,16 @@ export interface Mark {
 
 export type Marks = Array<Mark>;
 
-export interface Node {
+export interface FlameNode {
     name: string; // node name
     start: number; // node start time
     duration: number; // node duration
     type?: string; // node type (use it for custom colorization)
     color?: string; // node color (use it for current node colorization)
-    children?: Array<Node>; // node children (same structure as for node)
+    children?: Array<FlameNode>; // node children (same structure as for node)
 }
 
-export type Data = Array<Node>;
+export type Data = Array<FlameNode>;
 
 export type WaterfallItems = Array<{
     name: string;
@@ -66,7 +66,7 @@ export interface RectRenderQueue {
     [color: string]: Rect[];
 }
 
-export interface Text {
+export interface FlameText {
     text: string;
     x: number;
     y: number;
@@ -83,7 +83,7 @@ export interface Stroke {
 }
 
 export type FlatTreeNode = {
-    source: Node;
+    source: FlameNode;
     end: number;
     parent: FlatTreeNode | null;
     level: number;

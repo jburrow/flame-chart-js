@@ -1,30 +1,21 @@
 {
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
-		"project": "./tsconfig.eslint.json"
+		"project": "./tsconfig.json"
 	},
 	"plugins": [
 		"prettier",
 		"@typescript-eslint"
 	],
 	"extends": [
+		"eslint:recommended",
+		//"plugin:@typescript-eslint/recommended",
 		"prettier"
 	],
-	"overrides": [
-		{
-			"files": [
-				"src/**/*.ts",
-				"example/src/**/*.js",
-				"example/src/**/*.ts"
-			],
-			"rules": {
-				"quotes": [
-					"error",
-					"single"
-				]
-			}
-		}
-	],
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
 	"rules": {
 		"prettier/prettier": "error",
 		"no-useless-return": "error",
@@ -70,7 +61,7 @@
 		],
 		// TS rules
 		"@typescript-eslint/prefer-optional-chain": "error",
-		"@typescript-eslint/no-unused-vars": "warn",
+		"@typescript-eslint/no-unused-vars": "error",
 		"@typescript-eslint/no-unused-expressions": "error",
 		"@typescript-eslint/no-unnecessary-type-arguments": "error",
 		"@typescript-eslint/no-unnecessary-type-assertion": "error",
