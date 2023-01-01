@@ -3,9 +3,27 @@
 	"parserOptions": {
 		"project": "./tsconfig.eslint.json"
 	},
-	"plugins": ["prettier", "@typescript-eslint"],
+	"plugins": [
+		"prettier",
+		"@typescript-eslint"
+	],
 	"extends": [
 		"prettier"
+	],
+	"overrides": [
+		{
+			"files": [
+				"src/**/*.ts",
+				"example/src/**/*.js",
+				"example/src/**/*.ts"
+			],
+			"rules": {
+				"quotes": [
+					"error",
+					"single"
+				]
+			}
+		}
 	],
 	"rules": {
 		"prettier/prettier": "error",
@@ -46,11 +64,13 @@
 		"no-self-assign": "error",
 		"no-self-compare": "error",
 		"no-setter-return": "error",
-		"object-curly-spacing": ["error", "always"],
-
+		"object-curly-spacing": [
+			"error",
+			"always"
+		],
 		// TS rules
 		"@typescript-eslint/prefer-optional-chain": "error",
-		"@typescript-eslint/no-unused-vars": "hint",
+		"@typescript-eslint/no-unused-vars": "warn",
 		"@typescript-eslint/no-unused-expressions": "error",
 		"@typescript-eslint/no-unnecessary-type-arguments": "error",
 		"@typescript-eslint/no-unnecessary-type-assertion": "error",

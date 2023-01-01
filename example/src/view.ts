@@ -1,5 +1,5 @@
 const wrapper = document.getElementById('wrapper');
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
 const nodeView = document.getElementById('selected-node');
 const dataInputsContainer = document.getElementById('data-inputs');
@@ -13,12 +13,7 @@ const importInput = document.getElementById('import-input');
 
 const customStyles = {};
 
-const createInput = ({
-                         name,
-                         units,
-                         value,
-                         type = 'number'
-                     }, prefix) => {
+const createInput = ({ name, units, value, type = 'number' }, prefix?: string) => {
     const input = document.createElement('input');
     const label = document.createElement('label');
     const div = document.createElement('div');
@@ -40,9 +35,11 @@ const createInput = ({
     div.appendChild(input);
 
     return {
-        div, input, label
-    }
-}
+        div,
+        input,
+        label,
+    };
+};
 
 const addInputs = (inputsContainer, inputsDict) => {
     const fragment = document.createDocumentFragment();
@@ -50,20 +47,23 @@ const addInputs = (inputsContainer, inputsDict) => {
     inputsDict.forEach((item, index) => {
         const { div, input } = createInput(item);
 
-        input.addEventListener('change', (e) => inputsDict[index].value = parseInt(e.target.value));
+        input.addEventListener(
+            'change',
+            (e: Event) => (inputsDict[index].value = parseInt((e.target as HTMLInputElement).value))
+        );
 
         fragment.appendChild(div);
     });
 
     inputsContainer.appendChild(fragment);
-}
+};
 
-const addStylesInputs = (inputsContainer, styles) => {
+const addStylesInputs = (inputsContainer, styles: Record<string, {}>) => {
     const fragment = document.createDocumentFragment();
 
     Object.entries(styles).forEach(([key, value]) => {
         customStyles[key] = {
-            ...value
+            ...value,
         };
     });
 
@@ -76,14 +76,19 @@ const addStylesInputs = (inputsContainer, styles) => {
 
         Object.entries(stylesBlock).forEach(([styleName, value]) => {
             const isNumber = typeof value === 'number';
-            const { input, div } = createInput({
-                name: styleName,
-                value,
-                type: isNumber ? 'number' : 'text'
-            }, component);
+            const { input, div } = createInput(
+                {
+                    name: styleName,
+                    units: '',
+                    value,
+                    type: isNumber ? 'number' : 'text',
+                },
+                component
+            );
 
             input.addEventListener('change', (e) => {
-                customStyles[component][styleName] = isNumber ? parseInt(e.target.value) : e.target.value;
+                const value = (e.target as HTMLInputElement).value;
+                customStyles[component][styleName] = isNumber ? parseInt(value) : value;
             });
 
             fragment.appendChild(div);
@@ -91,12 +96,11 @@ const addStylesInputs = (inputsContainer, styles) => {
     });
 
     inputsContainer.appendChild(fragment);
-}
+};
 
-importButton.addEventListener('click', () => {
-    importInput.click();
-})
-
+importButton?.addEventListener('click', () => {
+    importInput?.click();
+});
 
 const download = (content, fileName, contentType) => {
     const a = document.createElement('a');
@@ -106,30 +110,34 @@ const download = (content, fileName, contentType) => {
     a.download = fileName;
 
     a.click();
-}
+};
 
-export const initView = (flameChart, config, styles) => {
+export const initView = (config, styles: Record<string, {}>) => {
     addInputs(dataInputsContainer, config);
     addStylesInputs(stylesInputsContainer, styles);
-}
+};
 
-export const getInputValues = (config) => config.reduce((acc, { name, value }) => {
-    acc[name] = value;
-    return acc;
-}, {});
+export const getInputValues = (config) => {
+    return config.reduce((acc, { name, value }) => {
+        acc[name] = value;
+        return acc;
+    }, {});
+};
 
 export const setNodeView = (text) => {
-    nodeView.innerHTML = text;
-}
+    if (nodeView !== null) {
+        nodeView.innerHTML = text;
+    }
+};
 
 export const onApplyStyles = (cb) => {
-    updateStylesButton.addEventListener('click', () => {
+    updateStylesButton?.addEventListener('click', () => {
         cb(customStyles);
     });
-}
+};
 
 export const onUpdate = (cb) => {
-    updateButton.addEventListener('click', () => {
+    updateButton?.addEventListener('click', () => {
         updateButton.innerHTML = 'Generating...';
         updateButton.setAttribute('disabled', 'true');
 
@@ -139,31 +147,31 @@ export const onUpdate = (cb) => {
             updateButton.innerHTML = 'Generate random tree';
         }, 1);
     });
-}
+};
 
 export const onExport = (cb) => {
-    exportButton.addEventListener('click', () => {
+    exportButton?.addEventListener('click', () => {
         const data = cb();
 
         download(data, 'data.json', 'application/json');
     });
-}
+};
 
 export const onImport = (cb) => {
-    importInput.addEventListener('change', (e) => {
-        e.target.files[0].text().then(cb);
-    })
-}
+    importInput?.addEventListener('change', (e) => {
+        const input = e.target as HTMLInputElement;
+        if (input?.files?.length) {
+            input.files[0].text().then(cb);
+        }
+    });
+};
 
 export const getWrapperWH = () => {
-    const style = window.getComputedStyle(wrapper, null);
+    const style = window.getComputedStyle(wrapper as any as Element, null);
 
-    return [
-        parseInt(style.getPropertyValue('width')),
-        parseInt(style.getPropertyValue('height')) - 3
-    ];
-}
+    return [parseInt(style.getPropertyValue('width')), parseInt(style.getPropertyValue('height')) - 3];
+};
 
 export const getCanvas = () => {
     return canvas;
-}
+};

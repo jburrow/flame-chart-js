@@ -1,8 +1,10 @@
-export const query = location.search
+import { FlameChart } from '../../src/flame-chart';
 
-export const initQuery = (flameChart) => {
+export const query = location.search;
+
+export const initQuery = (flameChart: FlameChart) => {
     if (query) {
-        const args = query
+        const args: Record<string, string> = query
             .split('?')
             .map((arg) => arg.split('='))
             .reduce((acc, [key, value]) => {
@@ -11,16 +13,16 @@ export const initQuery = (flameChart) => {
                 return acc;
             }, {});
 
-        if (args.file) {
-            fetch(decodeURIComponent(args.file), {
+        if (args['file']) {
+            fetch(decodeURIComponent(args['file']), {
                 method: 'GET',
-                mode: 'no-cors'
+                mode: 'no-cors',
             })
                 .then((res) => res.text())
                 .then((data) => {
                     flameChart.setData(JSON.parse(data));
-                    flameChart.resetView();
+                    flameChart.renderEngine.resetView();
                 });
         }
     }
-}
+};
