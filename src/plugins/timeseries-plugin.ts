@@ -161,7 +161,7 @@ export class TimeseriesPlugin extends UIPlugin<TimeseriesPluginStyles> {
         }
 
         const padding = 5;
-        const heightPerValueUnit = (this.height - padding) / (this.summary.max - this.summary.min);
+        const heightPerValueUnit = (this.height - padding) / Math.max(this.summary.max - this.summary.min, 1);
 
         const normalizeValue = (v: number) => {
             return this.height - v * heightPerValueUnit;

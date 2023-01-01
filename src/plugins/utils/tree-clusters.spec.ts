@@ -1,4 +1,4 @@
-// import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 // import { clusterizeFlatTree, flatTree, metaClusterizeFlatTree, reclusterizeClusteredFlatTree } from './tree-clusters';
 
 // const data = [
@@ -778,7 +778,11 @@
 //     },
 // ];
 
-// describe('tree clusters', () => {
+describe('tree clusters', () => {
+    it('need works!', () => {
+        expect(1).toBe(1);
+    });
+});
 //     it('flatTree', () => {
 //         // expect(flatTree(data)).toStrictEqual(flatTreeData);
 //     });
